@@ -16,7 +16,21 @@
 
 </style>
 <header class="header">
-    <a href="listprod.jsp">Products</a>
+    <a href="listprod.jsp">Shop</a>
     <a href="listorder.jsp">Orders</a>
     <a href="showcart.jsp">Cart</a>
+    <a href="login.jsp">
+        <%
+            String authenticated = session.getAttribute("authenticatedUser") == null ?
+                    null : session.getAttribute("authenticatedUser").toString();
+            if(authenticated == null || authenticated.equals("")){
+                authenticated = "Login";
+            }
+            out.print(authenticated);
+
+        %>
+
+    </a>
 </header>
+
+

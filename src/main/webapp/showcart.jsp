@@ -11,8 +11,7 @@
 	a.btn{
 		cursor: pointer;
 		color: #fff;
-		background-color: #007bff;
-		border-color: #007bff;
+		background-color: #d91010;
 		display: inline-block;
 		font-weight: 400;
 		text-align: center;
@@ -20,11 +19,12 @@
 		user-select: none;
 		padding: 0.375rem 0.75rem;
 		font-size: 1rem;
-		line-height: 1.5;
+		line-height: 0.5;
 		border-radius: 0.25rem;
 		transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
 	}
 </style>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 <head>
 <%@ include file="header.jsp" %>
 <title>Your Shopping Cart</title>
@@ -91,9 +91,7 @@ else
 
 		out.print("<td align=\"right\">"+currFormat.format(pr)+"</td>");
 		out.print("<td align=\"right\">"+currFormat.format(pr*qty)+"</td>");
-		out.print(String.format("<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"showcart.jsp?delete=%s\" class=\"btn\">Remove Item from Cart</a></td>", entry.getKey()));
-		out.print("<td>&nbsp;&nbsp;&nbsp;&nbsp;" +
-				"<input type=button OnClick=\"update(1, document.form1.newqty1.value)\" value=\"Update Quantity\"> </tr");
+		out.print(String.format("<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"showcart.jsp?delete=%s\" class=\"btn\"><i class=\"fa fa-trash-o\"></i></a></td>", entry.getKey()));
 		out.println("</tr>");
 		total = total +pr*qty;
 	}
