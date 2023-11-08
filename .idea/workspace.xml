@@ -7,8 +7,6 @@
     <list default="true" id="ccad9944-e7af-4932-9aa4-69ccb95797b5" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/webapp/header.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/header.jsp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/listprod.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/listprod.jsp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/order.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/order.jsp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/webapp/showcart.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/showcart.jsp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -52,7 +50,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "MacKenzies-branch",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -164,7 +162,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1699395792125</updated>
-      <workItem from="1699395792792" duration="21497000" />
+      <workItem from="1699395792792" duration="26516000" />
     </task>
     <servers />
   </component>

@@ -4,8 +4,27 @@
 <%@ page import="java.text.NumberFormat" %>
 <%@ page import="java.util.Map" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF8"%>
+
 <!DOCTYPE html>
 <html>
+<style>
+	a.btn{
+		cursor: pointer;
+		color: #fff;
+		background-color: #007bff;
+		border-color: #007bff;
+		display: inline-block;
+		font-weight: 400;
+		text-align: center;
+		vertical-align: middle;
+		user-select: none;
+		padding: 0.375rem 0.75rem;
+		font-size: 1rem;
+		line-height: 1.5;
+		border-radius: 0.25rem;
+		transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+	}
+</style>
 <head>
 <%@ include file="header.jsp" %>
 <title>Your Shopping Cart</title>
@@ -16,6 +35,10 @@
 // Get the current list of products
 @SuppressWarnings({"unchecked"})
 HashMap<String, ArrayList<Object>> productList = (HashMap<String, ArrayList<Object>>) session.getAttribute("productList");
+String prodID = request.getParameter("delete");
+if(prodID != null && !prodID.equals("")){
+	productList.remove(prodID);
+}
 
 if (productList == null)
 {	out.println("<H1>Your shopping cart is empty!</H1>");
@@ -67,7 +90,10 @@ else
 		}		
 
 		out.print("<td align=\"right\">"+currFormat.format(pr)+"</td>");
-		out.print("<td align=\"right\">"+currFormat.format(pr*qty)+"</td></tr>");
+		out.print("<td align=\"right\">"+currFormat.format(pr*qty)+"</td>");
+		out.print(String.format("<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"showcart.jsp?delete=%s\" class=\"btn\">Remove Item from Cart</a></td>", entry.getKey()));
+		out.print("<td>&nbsp;&nbsp;&nbsp;&nbsp;" +
+				"<input type=button OnClick=\"update(1, document.form1.newqty1.value)\" value=\"Update Quantity\"> </tr");
 		out.println("</tr>");
 		total = total +pr*qty;
 	}

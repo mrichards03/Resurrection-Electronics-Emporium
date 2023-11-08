@@ -7,7 +7,11 @@
 --%>
 <style>
     header{
-        background-color: aqua;
+        background-color: #6494d5;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        border-style: solid;
     }
 
 </style>
