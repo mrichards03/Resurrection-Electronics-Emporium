@@ -3,8 +3,8 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF8"%>
 <!DOCTYPE html>
 <html>
-<%@ include file="header.jsp" %>
 <head>
+<%@ include file="header.jsp" %>
 <title>YOUR NAME Grocery</title>
 </head>
 <body>

@@ -5,7 +5,13 @@
   Time: 12:03 PM
   To change this template use File | Settings | File Templates.
 --%>
-<header>
+<style>
+    header{
+        background-color: aqua;
+    }
+
+</style>
+<header class="header">
     <a href="listprod.jsp">Products</a>
     <a href="listorder.jsp">Orders</a>
     <a href="showcart.jsp">Cart</a>
