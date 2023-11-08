@@ -1,13 +1,14 @@
 <%@ page language="java" import="java.io.*"%>
 <%@ page import="java.sql.*" %>
-try
-{	// Load driver class
-	Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-}
-catch (java.lang.ClassNotFoundException e)
-{
-	out.println("ClassNotFoundException: " +e);
-}
+
+<script>
+
+		function redirect() {
+			history.go(-2);
+		}
+
+</script>
+
 <%
 	String authenticatedUser = null;
 	session = request.getSession(true);
@@ -19,8 +20,13 @@ catch (java.lang.ClassNotFoundException e)
 	catch(IOException e)
 	{	System.err.println(e); }
 
-	if(authenticatedUser != null)
-		response.sendRedirect("\");	// Successful login
+	if(authenticatedUser != null){
+		%>
+		<script>
+			redirect();
+		</script>
+		<%
+	}
 	else
 		response.sendRedirect("login.jsp");		// Failed login - redirect back to login page with a message
 %>
