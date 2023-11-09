@@ -8,7 +8,7 @@
 <!DOCTYPE html>
 <html>
 <style>
-	a.btn{
+	.btn{
 		cursor: pointer;
 		color: #fff;
 		background-color: #d91010;
@@ -23,7 +23,20 @@
 		border-radius: 0.25rem;
 		transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
 	}
+	.inputNum {
+		width: 3rem;
+		margin: 0.5rem;
+	}
 </style>
+<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+<script>
+	$(document).ready(function() {
+		$('form input').on('input', function() {
+			$(this).closest('form').submit();
+		});
+	});
+
+</script>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 <head>
 <%@ include file="header.jsp" %>
@@ -65,8 +78,11 @@ else
 		
 		out.print("<tr><td>"+product.get(0)+"</td>");
 		out.print("<td>"+product.get(1)+"</td>");
-
-		out.print("<td align=\"center\">"+product.get(3)+"</td>");
+		out.print("<td align=\"center\"> <form method=post action=\"qtyChanged.jsp\">");
+		out.print("<input name=\"qty\" class=\"inputNum\" min=\"1\" type=\"number\" " +
+				"value=\""+product.get(3) +"\"/>");
+		out.print("<input hidden name=\"key\" value=\"" + entry.getKey() + "\" />");
+		out.print("</form> </td>");
 		Object price = product.get(2);
 		Object itemqty = product.get(3);
 		double pr = 0;
@@ -89,7 +105,7 @@ else
 			out.println("Invalid quantity for product: "+product.get(0)+" quantity: "+qty);
 		}		
 
-		out.print("<td align=\"right\">"+currFormat.format(pr)+"</td>");
+		out.print("<td align=\"right\">" +currFormat.format(pr)+"</td>");
 		out.print("<td align=\"right\">"+currFormat.format(pr*qty)+"</td>");
 		out.print(String.format("<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"showcart.jsp?delete=%s\" class=\"btn\"><i class=\"fa fa-trash-o\"></i></a></td>", entry.getKey()));
 		out.println("</tr>");
@@ -104,5 +120,4 @@ else
 %>
 <h2><a href="listprod.jsp">Continue Shopping</a></h2>
 </body>
-</html> 
-
+</html>

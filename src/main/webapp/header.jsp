@@ -12,6 +12,16 @@
         justify-content: space-around;
         align-items: center;
         border-style: solid;
+        height: 1.75rem;
+    }
+    header a {
+        text-decoration: none;
+        color: black;
+    }
+
+    header a:hover{
+        background-color: #5472d7;
+        padding: 0.25rem;
     }
 
 </style>
