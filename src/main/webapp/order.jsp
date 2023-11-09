@@ -14,7 +14,6 @@
 
 <% 
 // Get customer id
-String custId = request.getParameter("customerId");
 @SuppressWarnings({"unchecked"})
 HashMap<String, ArrayList<Object>> productList = (HashMap<String, ArrayList<Object>>) session.getAttribute("productList");
 
@@ -25,6 +24,7 @@ HashMap<String, ArrayList<Object>> productList = (HashMap<String, ArrayList<Obje
         try ( Connection con = DriverManager.getConnection(url, uid, pw);
         Statement stmt = con.createStatement();)
         {
+                String custId = session.getAttribute("authenticatedUser").toString();
                 boolean hasCustId = custId != null && !custId.equals("");
                 PreparedStatement custQuery = null;
                 ResultSet custs = null;

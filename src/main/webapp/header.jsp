@@ -15,4 +15,5 @@
     <a href="listprod.jsp">Products</a>
     <a href="listorder.jsp">Orders</a>
     <a href="showcart.jsp">Cart</a>
+    <a href="login.jsp">Login</a>
 </header>

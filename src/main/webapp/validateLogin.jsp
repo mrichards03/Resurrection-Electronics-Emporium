@@ -63,7 +63,7 @@ String url = "jdbc:sqlserver://cosc304_sqlserver:1433;DatabaseName=orders;TrustS
 
 		if(retStr != null)
 		{	session.removeAttribute("loginMessage");
-			session.setAttribute("authenticatedUser",username);
+			session.setAttribute("authenticatedUser",retStr);
 		}
 		else{
 			session.setAttribute("loginMessage","Invalid username/password");
