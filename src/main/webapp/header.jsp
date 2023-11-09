@@ -36,7 +36,7 @@
             if(authenticated == null || authenticated.equals("")){
                 authenticated = "Login";
             }
-            out.print(authenticated);
+            out.print("Welcome " + authenticated);
 
         %>
 

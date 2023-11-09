@@ -53,7 +53,7 @@ if(prodID != null && !prodID.equals("")){
 	productList.remove(prodID);
 }
 
-if (productList == null)
+if (productList == null || productList.isEmpty())
 {	out.println("<H1>Your shopping cart is empty!</H1>");
 	productList = new HashMap<String, ArrayList<Object>>();
 }
