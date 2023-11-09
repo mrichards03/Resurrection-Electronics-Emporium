@@ -3,26 +3,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF8"%>
 <!DOCTYPE html>
 <html>
-<style>
-	.btn{
-		cursor: pointer;
-		color: #fff;
-		background-color: #258c17;
-		display: inline-block;
-		font-weight: 400;
-		text-align: center;
-		vertical-align: middle;
-		user-select: none;
-		padding: 0.375rem 0.75rem;
-		font-size: 1rem;
-		line-height: 1;
-		border-radius: 0.25rem;
-		transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
-	}
-	td a{
-		text-decoration: none;
-	}
-</style>
+
 <head>
 <%@ include file="header.jsp" %>
 <title>YOUR NAME Grocery</title>
@@ -70,25 +51,45 @@ catch (java.lang.ClassNotFoundException e)
 			prodsQuery.setString(1, name);
 		}else{
 			prodsQuery = con.prepareStatement("select * from product");
-			output.append("<h2>All Products</h2>");
+			%>
+</br>
+<h2>All Products</h2>
+
+<%
 		}
 
 		ResultSet prods = prodsQuery.executeQuery();
+%>
 
-		output.append("</br><table><tr><th></th><th>Product Name</th><th>Price</th></tr>");
+</br>
+<table class="table table-striped">
+	<tr>
+		<th></th>
+		<th>Product Name</th>
+		<th>Price</th>
+	</tr>
+
+<%
 		while (prods.next())
 		{
 			int prodId = prods.getInt("productId");
 			String prodName = prods.getString("productName");
+			double dPrice = prods.getDouble("productPrice");
 			String price = currFormat.format(prods.getDouble("productPrice"));
+%>
+	<tr>
+		<td>
+			<a href="addcart.jsp?id=<%=prodId%>&name=<%=prodName%>&price=<%=dPrice%>" class="btn btn-success">Add to Cart</a>
+		</td>
+		<td><%=prodName%></td>
+		<td><%=price%></td>
+	</tr>
 
-			output.append(String.format("<tr><td><a href=\"addcart.jsp?id=%d&name=%s&price=%f\" class=\"btn\">Add to Cart</a></td><td>%s</td><td>%s</td></tr>",
-					prodId, prodName, prods.getDouble("productPrice"), prodName, price));
-
-
+		<%
 		}
-		output.append("</table>");
-		out.print(output);
+	%>
+</table>
+		<%
 	}
 	catch (SQLException ex)
 	{

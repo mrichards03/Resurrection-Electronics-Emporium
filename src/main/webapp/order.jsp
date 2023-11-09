@@ -12,7 +12,7 @@
 </head>
 <body>
 
-<% 
+<%
 // Get customer id
 @SuppressWarnings({"unchecked"})
 HashMap<String, ArrayList<Object>> productList = (HashMap<String, ArrayList<Object>>) session.getAttribute("productList");
@@ -57,8 +57,20 @@ HashMap<String, ArrayList<Object>> productList = (HashMap<String, ArrayList<Obje
                 Iterator<Map.Entry<String, ArrayList<Object>>> iterator = productList.entrySet().iterator();
                 double total = 0;
 
-                StringBuilder output = new StringBuilder("Your Order Summary</h1><table><tr><th>Product Id</th>" +
-                        "<th>Product Name</th><th>Quantity</th><th>Price</th><th>Subtotal</th></tr>");
+                %>
+<h1>Your Order Summary</h1>
+<table class="table table-striped">
+        <tr>
+                <th>Product Id</th>
+                <th>Product Name</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Subtotal</th>
+        </tr>
+
+<%
+
+                StringBuilder output = new StringBuilder();
                 while (iterator.hasNext())
                 {
                         Map.Entry<String, ArrayList<Object>> entry = iterator.next();
@@ -82,23 +94,35 @@ HashMap<String, ArrayList<Object>> productList = (HashMap<String, ArrayList<Obje
                         ResultSet prodName = prodQuery.executeQuery();
                         prodName.next();
                         String name = prodName.getString("productname");
-                        output.append(String.format("<tr><td>%d</td><td>%s</td><td align=\"center\">%d</td>" +
-                                "<td align=\"right\">%s</td><td align=\"right\">%s</td></tr>\n", productId, name,
-                                qty, currFormat.format(price), currFormat.format(pricetimesqty)));
+                        %>
+
+        <tr>
+                <td><%=productId%></td>
+                <td><%=name%></td>
+                <td><%=qty%></td>
+                <td><%=currFormat.format(price)%></td>
+                <td ><%=currFormat.format(pricetimesqty)%></td>
+        </tr>
+
+        <%
                 }
                 PreparedStatement orderUpdate = con.prepareStatement("Update ordersummary set totalAmount = ? where orderid = ?");
                 orderUpdate.setDouble(1, total);
                 orderUpdate.setInt(2, orderId);
                 orderUpdate.execute();
-                output.append(String.format("<tr><td colspan=\"4\" align=\"right\"><b>Order Total</b></td>" +
-                        "<td aling=\"right\">%s</td></tr>\n" +
-                        "</table>\n", currFormat.format(total)));
+                %>
 
-                output.append(String.format("<h1>Order completed.  Will be shipped soon...</h1>\n" +
-                        "<h1>Your order reference number is: %d</h1>\n" +
-                        "<h1>Shipping to customer: %d Name: %s</h1>", orderId, intCustId, custName));
+        <tr>
+                <td colspan="4"><b>Order Total</b></td>
+                <td><%=currFormat.format(total)%></td>
+        </tr>
+</table>
 
-                out.println(output);
+        <h1>Order completed.  Will be shipped soon...</h1>
+        <h1>Your order reference number is: <%=orderId%></h1>
+        <h1>Shipping to customer: <%=intCustId%> Name: <%=custName%></h1>
+
+        <%
                 session.invalidate(); // Clear cart if order placed successfully
 
         }
@@ -113,8 +137,9 @@ HashMap<String, ArrayList<Object>> productList = (HashMap<String, ArrayList<Obje
                 else{
                         out.println("Invalid: " + ex.getMessage());
                 }
-
-                out.print("<p><a href=\"showcart.jsp\">Return to checkout</a></p>");
+%>
+<p><a href="showcart.jsp">Return to checkout</a></p>
+<%
 
         }
 

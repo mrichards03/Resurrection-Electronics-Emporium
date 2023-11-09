@@ -7,27 +7,6 @@
 
 <!DOCTYPE html>
 <html>
-<style>
-	.btn{
-		cursor: pointer;
-		color: #fff;
-		background-color: #d91010;
-		display: inline-block;
-		font-weight: 400;
-		text-align: center;
-		vertical-align: middle;
-		user-select: none;
-		padding: 0.375rem 0.75rem;
-		font-size: 1rem;
-		line-height: 0.5;
-		border-radius: 0.25rem;
-		transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
-	}
-	.inputNum {
-		width: 3rem;
-		margin: 0.5rem;
-	}
-</style>
 <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
 <script>
 	$(document).ready(function() {
@@ -60,12 +39,18 @@ if (productList == null || productList.isEmpty())
 else
 {
 	NumberFormat currFormat = NumberFormat.getCurrencyInstance();
-
-	out.println("<h1>Your Shopping Cart</h1>");
-	out.print("<table><tr><th>Product Id</th><th>Product Name</th><th>Quantity</th>");
-	out.println("<th>Price</th><th>Subtotal</th></tr>");
-
-	double total =0;
+%>
+<h1>Your Shopping Cart</h1>
+<table class="table">
+	<tr>
+		<th>Product Id</th>
+		<th>Product Name</th>
+		<th>Quantity</th>
+		<th>Price</th>
+		<th>Subtotal</th>
+	</tr>
+<%
+	double total = 0;
 	Iterator<Map.Entry<String, ArrayList<Object>>> iterator = productList.entrySet().iterator();
 	while (iterator.hasNext()) 
 	{	Map.Entry<String, ArrayList<Object>> entry = iterator.next();
@@ -75,14 +60,19 @@ else
 			out.println("Expected product with four entries. Got: "+product);
 			continue;
 		}
-		
-		out.print("<tr><td>"+product.get(0)+"</td>");
-		out.print("<td>"+product.get(1)+"</td>");
-		out.print("<td align=\"center\"> <form method=post action=\"qtyChanged.jsp\">");
-		out.print("<input name=\"qty\" class=\"inputNum\" min=\"1\" type=\"number\" " +
-				"value=\""+product.get(3) +"\"/>");
-		out.print("<input hidden name=\"key\" value=\"" + entry.getKey() + "\" />");
-		out.print("</form> </td>");
+		%>
+
+	<tr>
+		<td><%=product.get(0)%></td>
+		<td><%=product.get(1)%></td>
+		<td>
+			<form method=post action="qtyChanged.jsp" class="w-25">
+				<input name="qty" class="form-control" min="1" type="number" value="<%=product.get(3)%>"/>
+				<input hidden name="key" value="<%=entry.getKey()%>" />
+			</form>
+		</td>
+
+			<%
 		Object price = product.get(2);
 		Object itemqty = product.get(3);
 		double pr = 0;
@@ -104,18 +94,26 @@ else
 		{
 			out.println("Invalid quantity for product: "+product.get(0)+" quantity: "+qty);
 		}		
-
-		out.print("<td align=\"right\">" +currFormat.format(pr)+"</td>");
-		out.print("<td align=\"right\">"+currFormat.format(pr*qty)+"</td>");
-		out.print(String.format("<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"showcart.jsp?delete=%s\" class=\"btn\"><i class=\"fa fa-trash-o\"></i></a></td>", entry.getKey()));
-		out.println("</tr>");
+%>
+		<td><%=currFormat.format(pr)%></td>
+		<td><%=currFormat.format(pr*qty)%></td>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp;
+			<a href="showcart.jsp?delete=<%=entry.getKey()%>" class="btn btn-danger">
+				<i class="fa fa-trash-o"></i>
+			</a>
+		</td>
+	</tr>
+			<%
 		total = total +pr*qty;
 	}
-	out.println("<tr><td colspan=\"4\" align=\"right\"><b>Order Total</b></td>"
-			+"<td align=\"right\">"+currFormat.format(total)+"</td></tr>");
-	out.println("</table>");
-
-	out.println("<h2><a href=\"checkout.jsp\">Check Out</a></h2>");
+	%>
+	<tr>
+		<td colspan="4"><b>Order Total</b></td>
+		<td><%=currFormat.format(total)%></td>
+	</tr>
+</table>
+<h2><a href="checkout.jsp">Check Out</a></h2>
+		<%
 }
 %>
 <h2><a href="listprod.jsp">Continue Shopping</a></h2>
