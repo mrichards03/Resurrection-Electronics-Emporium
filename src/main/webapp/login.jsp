@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<%@ include file="header.jsp" %>
 <title>Login Screen</title>
 </head>
 <body>

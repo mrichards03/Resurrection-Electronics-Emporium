@@ -1,5 +1,14 @@
 <%@ page language="java" import="java.io.*"%>
 <%@ page import="java.sql.*" %>
+
+<script>
+
+		function redirect() {
+			history.go(-2);
+		}
+
+</script>
+
 <%
 	String authenticatedUser = null;
 	session = request.getSession(true);
@@ -11,8 +20,13 @@
 	catch(IOException e)
 	{	System.err.println(e); }
 
-	if(authenticatedUser != null)
-		response.sendRedirect("showcart.jsp");	// Successful login
+	if(authenticatedUser != null){
+		%>
+		<script>
+			redirect();
+		</script>
+		<%
+	}
 	else
 		response.sendRedirect("login.jsp");		// Failed login - redirect back to login page with a message
 %>
@@ -63,7 +77,7 @@ String url = "jdbc:sqlserver://cosc304_sqlserver:1433;DatabaseName=orders;TrustS
 
 		if(retStr != null)
 		{	session.removeAttribute("loginMessage");
-			session.setAttribute("authenticatedUser",retStr);
+			session.setAttribute("authenticatedUser",username);
 		}
 		else{
 			session.setAttribute("loginMessage","Invalid username/password");
