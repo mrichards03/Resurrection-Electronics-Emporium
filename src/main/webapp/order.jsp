@@ -114,7 +114,7 @@ HashMap<String, ArrayList<Object>> productList = (HashMap<String, ArrayList<Obje
                         out.println("Invalid: " + ex.getMessage());
                 }
 
-                out.print("<p><a href=\"checkout.jsp\">Return to checkout</a></p>");
+                out.print("<p><a href=\"showcart.jsp\">Return to checkout</a></p>");
 
         }
 

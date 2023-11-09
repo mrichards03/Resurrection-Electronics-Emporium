@@ -29,18 +29,20 @@
     <a href="listprod.jsp">Shop</a>
     <a href="listorder.jsp">Orders</a>
     <a href="showcart.jsp">Cart</a>
-    <a href="login.jsp">
-        <%
-            String authenticated = session.getAttribute("authenticatedUser") == null ?
+    <%
+        String authenticated = session.getAttribute("authenticatedUser") == null ?
                     null : session.getAttribute("authenticatedUser").toString();
             if(authenticated == null || authenticated.equals("")){
-                authenticated = "Login";
+                out.print("\n<a href=\"login.jsp?logout=0\"> Login  </a>\n" +
+"</header>");
             }
-            out.print("Welcome " + authenticated);
+            else{
+                out.print("\n<a href=\"login.jsp?logout=1\"> Logout  </a>\n" +
+"</header>");
+            }
 
         %>
 
-    </a>
-</header>
+
 
 
