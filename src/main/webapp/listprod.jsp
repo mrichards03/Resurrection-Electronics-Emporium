@@ -14,7 +14,7 @@
 
 <form method="get" action="listprod.jsp">
 <input type="text" name="productName" size="50">
-<input type="submit" value="Submit"><input type="reset" value="Reset"> (Leave blank for all products)
+<input class="btn btn-secondary" type="submit" value="Submit"> <input class="btn btn-secondary" type="reset" value="Reset"> (Leave blank for all products)
 </form>
 
 <% // Get product name to search for

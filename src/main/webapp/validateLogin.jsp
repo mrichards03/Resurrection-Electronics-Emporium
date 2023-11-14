@@ -65,7 +65,7 @@
 			session.setAttribute("authenticatedUser",retStr);
 		}
 		else{
-			session.setAttribute("loginMessage","Invalid username/password: " + username + "/" + password );
+			session.setAttribute("loginMessage","Invalid username/password");
 			out.print(retStr);
 		}
 		return retStr;

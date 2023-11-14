@@ -112,10 +112,14 @@ else
 		<td><%=currFormat.format(total)%></td>
 	</tr>
 </table>
-<h2><a href="checkout.jsp">Check Out</a></h2>
+<button class="btn btn-secondary">
+	<a class="text-decoration-none text-white" href="checkout.jsp">Check Out</a>
+</button>
 		<%
 }
 %>
-<h2><a href="listprod.jsp">Continue Shopping</a></h2>
+<button class="btn btn-secondary">
+	<a class="text-decoration-none text-white" href="listprod.jsp">Continue Shopping</a>
+</button>
 </body>
 </html>

@@ -86,7 +86,6 @@
     boolean LoggedIn = false;
 
     public void onLoginChange(String authenticated){
-        System.out.println("Login change method visited " + authenticated);
         if(authenticated == null || authenticated.isEmpty()){
             LoginMsg = "Login";
             LoginLink = "login.jsp";

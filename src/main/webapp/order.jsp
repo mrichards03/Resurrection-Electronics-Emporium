@@ -8,7 +8,6 @@
 <html>
 <head>
 <%@ include file="header.jsp" %>
-<%@ include file="jdbc.jsp"%>
 <title>YOUR NAME Grocery Order Processing</title>
 </head>
 <body>
@@ -121,7 +120,7 @@ HashMap<String, ArrayList<Object>> productList = (HashMap<String, ArrayList<Obje
         <h1>Shipping to customer: <%=intCustId%> Name: <%=custName%></h1>
 
         <%
-                session.invalidate(); // Clear cart if order placed successfully
+                session.setAttribute("productList", new HashMap<String, ArrayList<Object>>()); // Clear cart if order placed successfully
 
         }
         catch (Exception ex)
