@@ -1,5 +1,6 @@
 <%@ page language="java" import="java.io.*"%>
 <%@ page import="java.sql.*" %>
+<%@ include file="header.jsp"%>
 
 <script>
 
@@ -21,10 +22,13 @@
 	{	System.err.println(e); }
 
 	if(authenticatedUser != null){
+		onLoginChange(authenticated);
 		%>
+
 		<script>
 			redirect();
 		</script>
+
 		<%
 	}
 	else

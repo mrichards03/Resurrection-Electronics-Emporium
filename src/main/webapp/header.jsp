@@ -1,10 +1,10 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: User
-  Date: 11/8/2023
-  Time: 12:03 PM
-  To change this template use File | Settings | File Templates.
---%>
+
+<%
+    String authenticated = session.getAttribute("authenticatedUser") == null ?
+            null : session.getAttribute("authenticatedUser").toString();
+    onLoginChange(authenticated);
+%>
+
 <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css">
 <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-2 bg-dark text-white mb-4 border-bottom">
     <ul class="nav nav-pills">
@@ -20,26 +20,27 @@
     </ul>
     <div class="col-md-3 text-end">
         <button class="btn btn-primary">
-            <%
-                String authenticated = session.getAttribute("authenticatedUser") == null ?
-                        null : session.getAttribute("authenticatedUser").toString();
-                if(authenticated == null || authenticated.equals("")){
-            %>
-            <a class="nav-link" href="login.jsp?logout=0"> Login  </a>
-            <%
-            }
-            else{
-            %>
-            <a class="nav-link" href="login.jsp?logout=0"> Logout  </a>
-            <%
-                }
-
-            %>
-
+            <a class="nav-link" href="<%=LoginLink%>"> <%=LoginMsg%> </a>
         </button>
     </div>
 </header>
 
+<%!
+    String LoginMsg = "";
+    String LoginLink = "";
+
+    public void onLoginChange(String authenticated){
+        System.out.println("Login change method visited");
+        if(authenticated == null || authenticated.equals("")){
+            LoginMsg = "Login";
+            LoginLink = "login.jsp";
+        }else{
+            LoginMsg = "Logout";
+            LoginLink = "login.jsp?logout=1";
+        }
+    }
+
+%>
 
 
 

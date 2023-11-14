@@ -1,46 +1,33 @@
+<%
+	String loginMsg = "";
+	if(session.getAttribute("loginMessage") != null){
+		loginMsg = session.getAttribute("loginMessage").toString();
+	}
+%>
+
 <!DOCTYPE html>
 <html>
 <head>
-<%@ include file="header.jsp" %>
-<title>Login Screen</title>
+	<%@ include file="header.jsp" %>
+	<title>Login Screen</title>
 </head>
 <body>
-
-<center>
-
-
-<%
-	if(request.getParameter("logout") != null && request.getParameter("logout").equals("1")){
-		session.removeAttribute("authenticatedUser");
-		response.sendRedirect("login.jsp");
-	}
-	%>
-
-	<h3>Please Login to System</h3>
-
-	<%
-// Print prior error login message if present
-if (session.getAttribute("loginMessage") != null)
-	out.println("<p>"+session.getAttribute("loginMessage").toString()+"</p>");
-%>
-
-<br>
-<form name="MyForm" method=post action="validateLogin.jsp">
-<table width="40%">
-<tr>
-	<td><div align="right"><font face="Arial, Helvetica, sans-serif" size="2">Username:</font></div></td>
-	<td><input type="text" name="username"  size=10 maxlength=10></td>
-</tr>
-<tr>
-	<td><div align="right"><font face="Arial, Helvetica, sans-serif" size="2">Password:</font></div></td>
-	<td><input type="password" name="password" size=10 maxlength="10"></td>
-</tr>
-</table>
-
-<input class="submit" type="submit" name="Submit2" value="Log In">
-</form>
-<br>
-</center>
+<div class="d-inline text-center">
+	<h3>Please Log in to System</h3>
+	<p><%=loginMsg%></p>
+	<form name="MyForm" method=post action="validateLogin.jsp">
+		<div class="form-group my-2">
+			<label for="inputUsername">Username</label>
+			<input type="text" class="form-control w-auto d-inline" name="username" id="inputUsername" placeholder="Enter Username">
+		</div>
+		<div class="form-group">
+			<label for="inputPassword">Password</label>
+			<input type="password" class="form-control w-auto d-inline" name="password" id="inputPassword" placeholder="Password">
+		</div>
+		<button type="submit" class="btn btn-primary my-2" name="Submit2" value="Log In">Submit</button>
+	</form>
+</div>
 
 </body>
 </html>
+
