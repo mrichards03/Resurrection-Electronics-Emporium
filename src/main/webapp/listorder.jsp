@@ -67,7 +67,7 @@ catch (java.lang.ClassNotFoundException e)
 			</tr>
 			<tr>
 				<td colspan="4">
-					<table class="table table-sm table-secondary mx-5">
+					<table class="table table-sm mx-5">
 						<thead class="table-dark">
 							<tr>
 								<th>Product Id</th>

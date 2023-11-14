@@ -8,6 +8,7 @@
 <html>
 <head>
 <%@ include file="header.jsp" %>
+<%@ include file="jdbc.jsp"%>
 <title>YOUR NAME Grocery Order Processing</title>
 </head>
 <body>
@@ -17,19 +18,16 @@
 @SuppressWarnings({"unchecked"})
 HashMap<String, ArrayList<Object>> productList = (HashMap<String, ArrayList<Object>>) session.getAttribute("productList");
 
-        String url = "jdbc:sqlserver://cosc304_sqlserver:1433;DatabaseName=orders;TrustServerCertificate=True";
-        String uid = "sa";
-        String pw = "304#sa#pw";
-
-        try ( Connection con = DriverManager.getConnection(url, uid, pw);
-        Statement stmt = con.createStatement();)
+        try
         {
-                String custId = session.getAttribute("authenticatedUser").toString();
-                boolean hasCustId = custId != null && !custId.equals("");
-                PreparedStatement custQuery = null;
-                ResultSet custs = null;
-                int intCustId = 0;
-                String custName = "";
+                getConnection();
+
+                String custId = request.getParameter("customerId");
+                boolean hasCustId = custId != null && !custId.isEmpty() && !custId.equals("-1");
+                PreparedStatement custQuery;
+                ResultSet custs;
+                int intCustId;
+                String custName;
                 NumberFormat currFormat = NumberFormat.getCurrencyInstance();
 
                 if(hasCustId && productList != null && !productList.isEmpty()){
@@ -142,7 +140,9 @@ HashMap<String, ArrayList<Object>> productList = (HashMap<String, ArrayList<Obje
 <%
 
         }
-
+finally {
+                closeConnection();
+        }
 
 %>
 </body>
