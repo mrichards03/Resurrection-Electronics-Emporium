@@ -1,8 +1,10 @@
-<%@ page import="java.sql.*,java.net.URLEncoder" %>
+<%@ page import="java.sql.*" %>
 <%@ page import="java.text.NumberFormat" %>
 <%@ page import="java.util.ArrayList" %>
+<%@ page import="com.mackenzie.lab7.Product" %>
 <%@ page import="java.util.List" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF8"%>
+
 <!DOCTYPE html>
 <html>
 
@@ -54,13 +56,6 @@
 </html>
 
 <%!
-	public static class Product
-	{
-		int id;
-		String name;
-		double price;
-		String priceStr;
-	}
 
 	public List<Product> init(String name)
 	{

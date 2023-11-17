@@ -20,7 +20,6 @@
     if(window.location.pathname === "/shop/addcart.jsp"){ //don't include in-between pages
         url = "/shop/showcart.jsp";
     }
-    console.log(url);
     // If this page was not in the history, add it to the top of the stack
     if( thisPageIndex < 0){
         pageHistory.push(url);

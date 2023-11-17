@@ -1,5 +1,5 @@
 <%
-	boolean authenticated = session.getAttribute("authenticatedUser") == null ? false : true;
+	boolean authenticated = session.getAttribute("authenticatedUser") != null;
 
 	if (!authenticated)
 	{
