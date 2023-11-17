@@ -54,7 +54,9 @@
 
 		}
 		catch(SQLException e)
-		{	out.println(e);}
+		{
+			out.println(e);
+		}
 		finally {
 			closeConnection(); // Close database connection
 		}
@@ -68,6 +70,7 @@
 			session.setAttribute("loginMessage","Invalid username/password");
 			out.print(retStr);
 		}
+
 		return retStr;
 	}
 %>

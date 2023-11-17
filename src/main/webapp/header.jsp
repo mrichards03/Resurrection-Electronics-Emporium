@@ -15,13 +15,18 @@
 
     // Find this page in history
     var thisPageIndex = pageHistory.indexOf(window.location.pathname);
+    var url = window.location.pathname;
 
+    if(window.location.pathname === "/shop/addcart.jsp"){ //don't include in-between pages
+        url = "/shop/showcart.jsp";
+    }
+    console.log(url);
     // If this page was not in the history, add it to the top of the stack
     if( thisPageIndex < 0){
-        pageHistory.push(window.location.pathname);
+        pageHistory.push(url);
         thisPageIndex = pageHistory.length -1;
 
-    // Wipe the forward history
+        // Wipe the forward history
     }else if(thisPageIndex < pageHistory.length -1){
         for(; thisPageIndex < pageHistory.length -1;)
             pageHistory.pop();

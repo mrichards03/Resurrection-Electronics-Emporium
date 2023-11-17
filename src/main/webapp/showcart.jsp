@@ -28,13 +28,13 @@
 @SuppressWarnings({"unchecked"})
 HashMap<String, ArrayList<Object>> productList = (HashMap<String, ArrayList<Object>>) session.getAttribute("productList");
 String prodID = request.getParameter("delete");
-if(prodID != null && !prodID.equals("")){
+if(prodID != null && !prodID.isEmpty()){
 	productList.remove(prodID);
 }
 
 if (productList == null || productList.isEmpty())
-{	out.println("<H1>Your shopping cart is empty!</H1>");
-	productList = new HashMap<String, ArrayList<Object>>();
+{
+	out.println("<H1>Your shopping cart is empty!</H1>");
 }
 else
 {
@@ -54,7 +54,7 @@ else
 	Iterator<Map.Entry<String, ArrayList<Object>>> iterator = productList.entrySet().iterator();
 	while (iterator.hasNext()) 
 	{	Map.Entry<String, ArrayList<Object>> entry = iterator.next();
-		ArrayList<Object> product = (ArrayList<Object>) entry.getValue();
+		ArrayList<Object> product = entry.getValue();
 		if (product.size() < 4)
 		{
 			out.println("Expected product with four entries. Got: "+product);

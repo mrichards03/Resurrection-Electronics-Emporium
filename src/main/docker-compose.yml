@@ -73,8 +73,12 @@ services:
             network304:
                 aliases:
                     - cosc304-java
+        environment:
+          - JAVA_TOOL_OPTIONS="-agentlib:jdwp=transport=dt_socket,address=*:5005,server=y,suspend=n"
+
         ports:
-            - 80:8080
+            - "80:8080"
+            - "5005:5005"
 volumes: 
     cosc304-db:
     mysql-db:

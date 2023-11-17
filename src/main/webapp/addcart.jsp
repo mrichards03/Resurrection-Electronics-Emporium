@@ -26,8 +26,8 @@ product.add(quantity);
 
 // Update quantity if add same item to order again
 if (productList.containsKey(id))
-{	product = (ArrayList<Object>) productList.get(id);
-	int curAmount = ((Integer) product.get(3)).intValue();
+{	product = productList.get(id);
+	int curAmount = Integer.parseInt(product.get(3).toString());
 	product.set(3, new Integer(curAmount+1));
 }
 else
