@@ -15,7 +15,7 @@ services:
             - '3306'   
         volumes:
             - mysql-db:/var/lib/mysql
-            - ./webapp/ddl:/docker-entrypoint-initdb.d
+            - ./src/main/webapp/ddl:/docker-entrypoint-initdb.d
         networks:
             network304:
                 aliases:
@@ -33,7 +33,7 @@ services:
             - '1433'
         volumes:
             - cosc304-db:/var/lib/mssql            
-            - ./webapp/ddl:/scripts
+            - ./src/main/webapp/ddl:/scripts
         networks:
             network304:
                 aliases:
@@ -61,14 +61,15 @@ services:
                exit 0         
     app:
         build:
-            context: ./
+            context: src/main
             dockerfile: Dockerfile
         image: cosc304-java
         depends_on:
             - cosc304-sqlserver
         container_name: cosc304-java
         volumes:
-            - ./webapp:/usr/local/tomcat/webapps/shop/
+            - ./src/main/webapp:/usr/local/tomcat/webapps/shop/
+            - ./build/classes/java/main:/usr/local/tomcat/webapps/shop/WEB-INF/classes
         networks:
             network304:
                 aliases:

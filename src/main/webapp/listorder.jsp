@@ -92,6 +92,7 @@
 					custId = rst.getInt("customerId");
 					custName = rst.getString("firstname") + " " + rst.getString("lastname");
 					total = currFormat.format(rst.getDouble("totalAmount"));
+					products = new ArrayList<>();
 				}};
 
 				PreparedStatement prodsQuery = con.prepareStatement("select * from orderproduct op join product p on op.productId = p.productId where orderId = ?");
