@@ -18,7 +18,7 @@
 
         // Find this page in history
         var thisPageIndex = pageHistory.indexOf(url);
-        if(thisPageIndex > 0 )
+        if(thisPageIndex > 1 )
             window.location.href = pageHistory[thisPageIndex - 2];
     }
 
@@ -76,7 +76,7 @@
                         Welcome <%=custName%>
                     </button>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="customer.jsp">Customer Info</a></li>
+                        <li><a class="dropdown-item" href="customer.jsp">Profile</a></li>
                         <li><a class="dropdown-item" href="<%=LoginLink%>"><%=LoginMsg%></a></li>
                     </ul>
                 </div>

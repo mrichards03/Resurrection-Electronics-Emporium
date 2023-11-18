@@ -15,6 +15,7 @@
 	{	System.err.println(e); }
 
 	if(authenticatedUser != null){
+		request.setAttribute("loginMessage", null);
 		%>
 		<script>
 			back();
@@ -34,8 +35,10 @@
 		String retStr = null;
 		session.removeAttribute("loginMessage");
 
-		if(username == null || password == null || username.isEmpty() || password.isEmpty())
-				return null;
+		if(username == null || password == null || username.isEmpty() || password.isEmpty()){
+			session.setAttribute("loginMessage","Invalid username/password");
+			return null;
+		}
 
         try
 		{
@@ -65,7 +68,6 @@
 		}
 		else{
 			session.setAttribute("loginMessage","Invalid username/password");
-			out.print(retStr);
 		}
 
 		return retStr;

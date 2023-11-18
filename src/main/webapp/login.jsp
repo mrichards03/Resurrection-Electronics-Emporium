@@ -7,7 +7,13 @@
 		loginMsg = session.getAttribute("loginMessage").toString();
 	}
 %>
-
+<script>
+	window.onbeforeunload = onExit();
+	function onExit()
+	{
+		<%session.setAttribute("loginMessage", "");%>
+	}
+</script>
 <!DOCTYPE html>
 <html>
 <head>
