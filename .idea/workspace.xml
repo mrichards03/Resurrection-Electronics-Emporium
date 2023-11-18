@@ -4,17 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ccad9944-e7af-4932-9aa4-69ccb95797b5" name="Changes" comment="merge header">
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/header.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/header.jsp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/login.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/login.jsp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/shop.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/shop.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/showcart.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/showcart.jsp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/validateLogin.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/validateLogin.jsp" afterDir="false" />
-    </list>
+    <list default="true" id="ccad9944-e7af-4932-9aa4-69ccb95797b5" name="Changes" comment="fixing custId prob" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -183,6 +173,14 @@
       <updated>1699395792125</updated>
       <workItem from="1699395792792" duration="21497000" />
     </task>
+    <task id="LOCAL-00001" summary="fixing custId prob">
+      <created>1699496914813</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1699496914813</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -190,7 +188,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="merge header" />
-    <option name="LAST_COMMIT_MESSAGE" value="merge header" />
+    <MESSAGE value="fixing custId prob" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixing custId prob" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
