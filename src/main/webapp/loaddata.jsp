@@ -38,7 +38,7 @@ try ( Connection con = DriverManager.getConnection(urlForLoadData, uid, pw); )
             continue;
         
         if (command.trim().indexOf("go") == 0)
-            command = command.substring(3, command.length());
+            command = command.substring(3);
 
         // Hack to make sure variable is declared
         if (command.contains("INSERT INTO ordersummary") && !command.contains("DECLARE @orderId"))

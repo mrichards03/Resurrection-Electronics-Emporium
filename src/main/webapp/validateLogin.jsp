@@ -1,13 +1,7 @@
 <%@ page language="java" import="java.io.*"%>
 <%@ page import="java.sql.*" %>
+<%@ include file="header.jsp"%>
 
-<script>
-
-		function redirect() {
-			history.go(-2);
-		}
-
-</script>
 
 <%
 	String authenticatedUser = null;
@@ -21,9 +15,10 @@
 	{	System.err.println(e); }
 
 	if(authenticatedUser != null){
+		request.setAttribute("loginMessage", null);
 		%>
 		<script>
-			redirect();
+			back();
 		</script>
 		<%
 	}
@@ -38,28 +33,18 @@
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
 		String retStr = null;
+		session.removeAttribute("loginMessage");
 
-		if(username == null || password == null)
-				return null;
-		if((username.length() == 0) || (password.length() == 0))
-				return null;
+		if(username == null || password == null || username.isEmpty() || password.isEmpty()){
+			session.setAttribute("loginMessage","Invalid username/password");
+			return null;
+		}
 
-		// Could make a database connection here and check password but for now just checking for single password
+        try
+		{
+					getConnection();  // Make database connection
 
-		//if (username.equals("test") && password.equals("test"))
-		//	retStr = username;
-
-		// Login using database version
-String url = "jdbc:sqlserver://cosc304_sqlserver:1433;DatabaseName=orders;TrustServerCertificate=True";
-        	String uid = "sa";
-        	String pw = "304#sa#pw";
-        try ( Connection con = DriverManager.getConnection(url, uid, pw);
-                Statement stmt = con.createStatement();)
-                {
-
-                    // Make database connection
-
-                    PreparedStatement CIDQuery = con.prepareStatement("SELECT customerId FROM Customer WHERE userid = ? AND password = ?");
+                    PreparedStatement CIDQuery = con.prepareStatement("SELECT customerId FROM customer WHERE userid = ? AND password = ?");
                     CIDQuery.setString(1, username);
                     CIDQuery.setString(2, password);
                     ResultSet rst = CIDQuery.executeQuery();
@@ -69,19 +54,21 @@ String url = "jdbc:sqlserver://cosc304_sqlserver:1433;DatabaseName=orders;TrustS
 
 		}
 		catch(SQLException e)
-		{	out.println(e);}
+		{
+			out.println(e);
+		}
 		finally {
-			// Close database connection
+			closeConnection(); // Close database connection
 		}
 
 
 		if(retStr != null)
-		{	session.removeAttribute("loginMessage");
+		{
 			session.setAttribute("authenticatedUser",retStr);
 		}
 		else{
 			session.setAttribute("loginMessage","Invalid username/password");
-			out.print(retStr);}
+		}
 
 		return retStr;
 	}

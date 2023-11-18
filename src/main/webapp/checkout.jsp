@@ -1,23 +1,22 @@
-<!DOCTYPE html>
-<html>
-<head>
-<%@ include file="header.jsp" %>
-<title>Ray's Grocery CheckOut Line</title>
-</head>
-<body>
 <%
 if(session.getAttribute("authenticatedUser") == null){
 response.sendRedirect("login.jsp");
 }
 else{
-response.sendRedirect("order.jsp?customerId");
+    String username = session.getAttribute("authenticatedUser").toString();
+    int custID = getCustId(username);
+    response.sendRedirect("order.jsp?customerId="+custID);
 }
 %>
 
-<input type="text" name="customerId" size="50">
-<input type="submit" value="Submit"><input type="reset" value="Reset">
-</form>
+<%!
+    public int getCustId(String username){
+        try{
+            return Integer.parseInt(username);
+        }catch (Exception e){
+            System.err.println(e);
+        }
 
-</body>
-</html>
-
+        return -1;
+    }
+%>

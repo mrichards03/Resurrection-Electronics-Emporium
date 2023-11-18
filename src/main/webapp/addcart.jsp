@@ -15,7 +15,7 @@ if (productList == null)
 String id = request.getParameter("id");
 String name = request.getParameter("name");
 String price = request.getParameter("price");
-Integer quantity = new Integer(1);
+Integer quantity = Integer.valueOf(1);
 
 // Store product information in an ArrayList
 ArrayList<Object> product = new ArrayList<Object>();
@@ -26,9 +26,9 @@ product.add(quantity);
 
 // Update quantity if add same item to order again
 if (productList.containsKey(id))
-{	product = (ArrayList<Object>) productList.get(id);
-	int curAmount = ((Integer) product.get(3)).intValue();
-	product.set(3, new Integer(curAmount+1));
+{	product = productList.get(id);
+	int curAmount = Integer.parseInt(product.get(3).toString());
+	product.set(3, Integer.valueOf(curAmount + 1));
 }
 else
 	productList.put(id,product);
