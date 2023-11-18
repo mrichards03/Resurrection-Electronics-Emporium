@@ -4,12 +4,12 @@
 <%@ page import="com.mackenzie.lab7.Product" %>
 <%@ page import="java.util.List" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF8"%>
+<jsp:include page="header.jsp" />
+<%@ include file="jdbc.jsp"%>
 
 <!DOCTYPE html>
 <html>
-
 <head>
-<%@ include file="header.jsp" %>
 <title>YOUR NAME Grocery</title>
 </head>
 <body>
@@ -73,9 +73,8 @@
 		{
 			getConnection();
 
-			PreparedStatement prodsQuery = null;
+			PreparedStatement prodsQuery;
 			boolean hasName = name != null && !name.isEmpty();
-			StringBuilder output = new StringBuilder();
 			if(hasName)
 			{
 				name = "%" + name + "%";

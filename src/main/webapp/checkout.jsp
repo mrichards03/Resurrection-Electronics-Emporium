@@ -1,5 +1,3 @@
-<%@ include file="jdbc.jsp"%>
-
 <%
 if(session.getAttribute("authenticatedUser") == null){
 response.sendRedirect("login.jsp");
@@ -14,19 +12,9 @@ else{
 <%!
     public int getCustId(String username){
         try{
-            getConnection();
-            String query = "SELECT customerId as id FROM customer WHERE userid = ?";
-            PreparedStatement ps = con.prepareStatement(query);
-            ps.setString(1, username);
-            ResultSet rs = ps.executeQuery();
-            if(rs.next()){
-                return rs.getInt("id");
-            }
+            return Integer.parseInt(username);
         }catch (Exception e){
             System.err.println(e);
-        }
-        finally {
-            closeConnection();
         }
 
         return -1;

@@ -1,45 +1,53 @@
 <%@ include file="jdbc.jsp"%>
 <%
-    String authenticated = session.getAttribute("authenticatedUser") == null ?
+    String username = session.getAttribute("authenticatedUser") == null ?
             null : session.getAttribute("authenticatedUser").toString();
-    onLoginChange(authenticated);
+    onLoginChange(username);
 %>
 
 <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css">
 <script type="text/javascript" src="bootstrap/js/bootstrap.bundle.js"></script>
-
 <!--  keeps track of history without duplicates so login can go to previous page -->
 <script>
-    // Load or create a history array
-    var pageHistory = JSON.parse(sessionStorage.pageHistory || '[]');
-
-    // Find this page in history
-    var thisPageIndex = pageHistory.indexOf(window.location.pathname);
     var url = window.location.pathname;
-
-    if(window.location.pathname === "/shop/addcart.jsp"){ //don't include in-between pages
-        url = "/shop/showcart.jsp";
-    }
-    // If this page was not in the history, add it to the top of the stack
-    if( thisPageIndex < 0){
-        pageHistory.push(url);
-        thisPageIndex = pageHistory.length -1;
-
-        // Wipe the forward history
-    }else if(thisPageIndex < pageHistory.length -1){
-        for(; thisPageIndex < pageHistory.length -1;)
-            pageHistory.pop();
-    }
-
-    // Store history array
-    sessionStorage.pageHistory = JSON.stringify(pageHistory);
+    addPage(url);
 
     // Back button function
     function back(){
+        var pageHistory = JSON.parse(sessionStorage.pageHistory || '[]');
+
+        // Find this page in history
+        var thisPageIndex = pageHistory.indexOf(url);
         if(thisPageIndex > 0 )
             window.location.href = pageHistory[thisPageIndex - 2];
     }
+
+    function addPage(url){
+        var pageHistory = JSON.parse(sessionStorage.pageHistory || '[]');
+
+        // Find this page in history
+        var thisPageIndex = pageHistory.indexOf(url);
+
+        if(url === "/shop/addcart.jsp"){ //don't include in-between pages
+            url = "/shop/showcart.jsp";
+        }
+        // If this page was not in the history, add it to the top of the stack
+        if( thisPageIndex < 0){
+            pageHistory.push(url);
+            thisPageIndex = pageHistory.length -1;
+
+            // Wipe the forward history
+        }else if(thisPageIndex < pageHistory.length -1){
+            for(; thisPageIndex < pageHistory.length -1;)
+                pageHistory.pop();
+        }
+
+        // Store history array
+        sessionStorage.pageHistory = JSON.stringify(pageHistory);
+    }
+
 </script>
+
 <!DOCTYPE html>
 <html  data-bs-theme="dark">
 
@@ -68,6 +76,7 @@
                         Welcome <%=custName%>
                     </button>
                     <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="customer.jsp">Customer Info</a></li>
                         <li><a class="dropdown-item" href="<%=LoginLink%>"><%=LoginMsg%></a></li>
                     </ul>
                 </div>
@@ -89,26 +98,26 @@
     String custName = "";
     boolean LoggedIn = false;
 
-    public void onLoginChange(String authenticated){
-        if(authenticated == null || authenticated.isEmpty()){
+    public void onLoginChange(String username){
+        if(username == null || username.isEmpty()){
             LoginMsg = "Login";
             LoginLink = "login.jsp";
             LoggedIn = false;
         }else{
             LoginMsg = "Logout";
             LoginLink = "logout.jsp";
-            custName = getCustName(authenticated);
+            custName = getCustName(username);
             LoggedIn = true;
         }
     }
 
-    public String getCustName(String authenticated){
+    public String getCustName(String id){
         try{
             getConnection();
 
-            String query = "SELECT firstname FROM customer WHERE userid = ?";
+            String query = "SELECT firstname FROM customer WHERE customerId = ?";
             PreparedStatement ps = con.prepareStatement(query);
-            ps.setString(1, authenticated);
+            ps.setString(1, id);
             ResultSet rs = ps.executeQuery();
             if(rs.next()){
                 return rs.getString("firstname");

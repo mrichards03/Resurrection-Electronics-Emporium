@@ -1,7 +1,8 @@
+<jsp:include page="header.jsp" />
+
 <!DOCTYPE html>
 <html>
 <head>
-	<%@ include file="header.jsp"%>
 	<title>Ray's Grocery Main Page</title>
 </head>
 <body>

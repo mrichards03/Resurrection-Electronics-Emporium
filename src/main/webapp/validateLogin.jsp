@@ -15,13 +15,10 @@
 	{	System.err.println(e); }
 
 	if(authenticatedUser != null){
-		onLoginChange(authenticated);
 		%>
-
 		<script>
 			back();
 		</script>
-
 		<%
 	}
 	else
@@ -44,12 +41,12 @@
 		{
 					getConnection();  // Make database connection
 
-                    PreparedStatement CIDQuery = con.prepareStatement("SELECT userid FROM customer WHERE userid = ? AND password = ?");
+                    PreparedStatement CIDQuery = con.prepareStatement("SELECT customerId FROM customer WHERE userid = ? AND password = ?");
                     CIDQuery.setString(1, username);
                     CIDQuery.setString(2, password);
                     ResultSet rst = CIDQuery.executeQuery();
                     rst.next();
-                    retStr = rst.getString("userid");
+                    retStr = rst.getString("customerId");
 
 
 		}

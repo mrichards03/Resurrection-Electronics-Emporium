@@ -1,3 +1,6 @@
+<jsp:include page="header.jsp" />
+<%@ include file="jdbc.jsp"%>
+
 <%
 	String loginMsg = "";
 	if(session.getAttribute("loginMessage") != null){
@@ -8,7 +11,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<%@ include file="header.jsp" %>
 	<title>Login Screen</title>
 </head>
 <body>

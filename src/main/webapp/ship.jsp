@@ -1,10 +1,7 @@
 <%@ page import="java.sql.*" %>
 <%@ page import="java.text.NumberFormat" %>
-<%@ page import="java.util.HashMap" %>
-<%@ page import="java.util.Iterator" %>
-<%@ page import="java.util.ArrayList" %>
-<%@ page import="java.util.Map" %>
-<%@ page import="java.util.Date" %>
+<%@ page import="java.util.*" %>
+<jsp:include page="header.jsp"/>
 <%@ include file="jdbc.jsp" %>
 
 <html>
@@ -12,25 +9,132 @@
 <title>YOUR NAME Grocery Shipment Processing</title>
 </head>
 <body>
-        
-<%@ include file="header.jsp" %>
 
 <%
-	// TODO: Get order id
-          
-	// TODO: Check if valid order id in database
-	
-	// TODO: Start a transaction (turn-off auto-commit)
-	
-	// TODO: Retrieve all items in order with given id
-	// TODO: Create a new shipment record.
-	// TODO: For each item verify sufficient quantity available in warehouse 1.
-	// TODO: If any item does not have sufficient inventory, cancel transaction and rollback. Otherwise, update inventory for each item.
-	
-	// TODO: Auto-commit should be turned back on
-%>                       				
+	String orderId = request.getParameter("orderId");
+	List<ShippedItem> items = shipItems(orderId);
+	boolean ShipSuccess = true;
+	if(items.isEmpty()){
+		ShipSuccess = false;
+%>
+<p><strong>Invalid order id</strong></p>
+<%
+	}
+	if(items.size() > 3){
+		ShipSuccess = false;
+%>
+<p><strong>Too many items in order</strong></p>
+<%
+	}
 
-<h2><a href="index.jsp/php">Back to Main Page</a></h2>
+	for(ShippedItem item : items){
+		if(item.success){
+%>
+<p>Order product: <%=item.productId%> Qty: <%=item.quantity%> Previous Inventory: <%=item.inventory%> New Inventory: <%=item.newInventory%></p>
+<%
+	}else{
+		ShipSuccess = false;
+%>
+<p><strong><%=item.errMessage%></strong></p>
+<%
+	}}
+%>
+
+
+<%
+	if(ShipSuccess){
+%>
+		<p><strong>Shipment successfully processed</strong></p>
+<%
+	}
+%>
+
+
+<button class="btn btn-secondary"><a class="text-decoration-none text-white" href="index.jsp">Back to Main Page</a></button>
 
 </body>
 </html>
+
+<%!
+	public class ShippedItem{
+		public String productId;
+		public int quantity;
+		public int inventory;
+		public int newInventory;
+		public boolean success;
+		public String errMessage;
+	}
+
+	private List<ShippedItem> shipItems(String orderId){
+		List<ShippedItem> items = new ArrayList<>();
+
+		try{
+			getConnection();
+
+			PreparedStatement pstmt = con.prepareStatement("SELECT * FROM orderproduct where orderId = ?");
+			pstmt.setString(1, orderId);
+			ResultSet rs = pstmt.executeQuery();
+
+			con.setAutoCommit(false);
+
+			PreparedStatement newShipQuery = con.prepareStatement("INSERT INTO shipment (warehouseId, shipmentDate) VALUES (1,?)");
+			newShipQuery.setDate(1, new java.sql.Date(new java.util.Date().getTime()));
+			newShipQuery.executeUpdate();
+
+			int count = 0;
+			while(rs.next()) {
+				count++;
+				ShippedItem item = new ShippedItem(){{
+					productId = rs.getString("productId");
+					quantity = rs.getInt("quantity");
+				}};
+				PreparedStatement prodInventoryQuery = con.prepareStatement("SELECT * FROM productinventory where productId = ? and warehouseId = 1");
+				prodInventoryQuery.setString(1, item.productId);
+				ResultSet prodInventory = prodInventoryQuery.executeQuery();
+
+				if(!prodInventory.next()){
+					item.success = false;
+					item.errMessage = "Shipment not done. Insufficient inventory for product id: " + item.productId;
+					items.add(item);
+					con.rollback();
+					break;
+				}
+
+				item.inventory = prodInventory.getInt("quantity");
+
+				if(item.inventory < item.quantity){
+					item.success = false;
+					item.errMessage = "Shipment not done. Insufficient inventory for product id: " + item.productId;
+					items.add(item);
+					con.rollback();
+					break;
+				}
+				item.newInventory = item.inventory - item.quantity;
+				PreparedStatement updateInventoryQuery = con.prepareStatement("UPDATE productinventory SET quantity = ? WHERE productId = ? and warehouseId = 1");
+				updateInventoryQuery.setInt(1, item.newInventory);
+				updateInventoryQuery.setString(2, item.productId);
+				updateInventoryQuery.executeUpdate();
+
+				item.success = true;
+				items.add(item);
+			}
+
+
+			if(items.isEmpty() || count > 3){
+				con.rollback();
+				return items;
+			}
+
+			con.commit();
+			con.setAutoCommit(true);
+
+		}catch (SQLException e){
+			System.err.print(e);
+		}
+		finally {
+			closeConnection();
+		}
+
+		return items;
+	}
+%>

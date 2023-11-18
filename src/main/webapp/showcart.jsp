@@ -4,6 +4,8 @@
 <%@ page import="java.text.NumberFormat" %>
 <%@ page import="java.util.Map" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF8"%>
+<jsp:include page="header.jsp" />
+<%@ include file="jdbc.jsp"%>
 
 <!DOCTYPE html>
 <html>
@@ -18,7 +20,6 @@
 </script>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 <head>
-<%@ include file="header.jsp" %>
 <title>Your Shopping Cart</title>
 </head>
 <body>
