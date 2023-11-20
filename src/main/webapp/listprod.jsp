@@ -43,7 +43,9 @@
 			<td>
 				<a href="addcart.jsp?id=<%=prod.id%>&name=<%=prod.name%>&price=<%=prod.price%>" class="btn btn-success">Add to Cart</a>
 			</td>
-			<td><%=prod.name%></td>
+			<td>
+				<a href="product.jsp?id=<%=prod.id%>"><%=prod.name%></a>
+			</td>
 			<td><%=prod.priceStr%></td>
 		</tr>
 

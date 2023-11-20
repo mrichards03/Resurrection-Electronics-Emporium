@@ -1,7 +1,7 @@
 <%@ page trimDirectiveWhitespaces="true" import="java.sql.*,java.io.*" %><%@ include file="jdbc.jsp" %><%
 
 // Indicate that we are sending a JPG picture
-response.setContentType("image/jpeg");  
+response.setContentType("image/jpeg");
 
 // Get the image id
 String id = request.getParameter("id");
@@ -15,18 +15,18 @@ try{
 }
 catch(Exception e)
 {	out.println("Invalid image id: "+id+" Error: "+e);
-	return; 
+	return;
 }
 
 String sql = "SELECT productImage FROM Product P  WHERE productId = ?";
 
-try 
+try
 {
 	getConnection();
 
 	PreparedStatement stmt = con.prepareStatement(sql);
 	stmt.setInt(1,idVal);
-	ResultSet rst = stmt.executeQuery();		
+	ResultSet rst = stmt.executeQuery();
 
 	int BUFFER_SIZE = 10000;
 	byte[] data = new byte[BUFFER_SIZE];
@@ -34,17 +34,29 @@ try
 	if (rst.next())
 	{
 		// Copy stream of bytes from database to output stream for JSP/Servlet
-		InputStream istream = rst.getBinaryStream(1);
-		OutputStream ostream = response.getOutputStream();
+		try(InputStream istream = rst.getBinaryStream(1);
+				OutputStream ostream = response.getOutputStream();){
+		if (istream == null) {
+			out.println("No image data found for the given ID.");
+			return;
+		}
+
+		if (ostream == null) {
+			out.println("Error obtaining output stream.");
+			return;
+		}
 
 		int count;
 		while ( (count = istream.read(data, 0, BUFFER_SIZE)) != -1)
 			ostream.write(data, 0, count);
 
 		ostream.close();
-		istream.close();					
-	}
-} 
+		istream.close();
+	}catch(Exception e){
+			out.println("image retrieval failed");
+			out.println(e);
+		}
+}}
 catch (SQLException ex) {
 	out.println(ex);
 }
