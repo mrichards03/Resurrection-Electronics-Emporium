@@ -5,7 +5,7 @@
 <html>
 <head>
     <title>Ray's Grocery - Product Information</title>
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 
@@ -33,27 +33,32 @@
     </tr>
 
     <%
-        getConnection();
         NumberFormat currFormat = NumberFormat.getCurrencyInstance();
         int pId = Integer.valueOf(request.getParameter("id"));
         String name = "";
         double price = 0;
         String imageURL = "";
-        try (PreparedStatement prodQuery = con.prepareStatement("Select productName, productPrice from product where productId = ?")) {
+
+        try{
+
+            getConnection();
+            PreparedStatement prodQuery = con.prepareStatement("Select * from product where productId = ?");
             prodQuery.setInt(1, pId);
-            try (ResultSet prodNameResultSet = prodQuery.executeQuery()) {
-                if (prodNameResultSet.next()) {
-                    price = prodNameResultSet.getDouble("productprice");
-                    name = prodNameResultSet.getString("productname");
-                    imageURL = prodNameResultSet.getString("productImageURL");
-                } else {
-                    // Handle the case when no rows are returned
-                }
+            ResultSet prodNameResultSet = prodQuery.executeQuery();
+            if (prodNameResultSet.next()) {
+                price = prodNameResultSet.getDouble("productprice");
+                name = prodNameResultSet.getString("productname");
+                imageURL = prodNameResultSet.getString("productImageURL");
+            } else {
+                // Handle the case when no rows are returned
             }
         } catch (SQLException e) {
-            e.printStackTrace(); // Handle the exception appropriately
+            out.print(e); // Handle the exception appropriately
         }
-        closeConnection();
+        finally{
+            closeConnection();
+        }
+
     %>
 
     <tr>
