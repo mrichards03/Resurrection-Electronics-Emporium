@@ -1,11 +1,12 @@
 <%@ page import="java.util.HashMap" %>
 <%@ page import="java.text.NumberFormat" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF8"%>
+<%@  page trimDirectiveWhitespaces="true" %>
 
 <html>
 <head>
     <title>Ray's Grocery - Product Information</title>
-    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 
@@ -33,32 +34,26 @@
     </tr>
 
     <%
+        getConnection();
         NumberFormat currFormat = NumberFormat.getCurrencyInstance();
         int pId = Integer.valueOf(request.getParameter("id"));
         String name = "";
         double price = 0;
         String imageURL = "";
-
-        try{
-
-            getConnection();
-            PreparedStatement prodQuery = con.prepareStatement("Select * from product where productId = ?");
+        String productDesc = "";
+        try (PreparedStatement prodQuery = con.prepareStatement("Select * from product where productId = ?")) {
             prodQuery.setInt(1, pId);
-            ResultSet prodNameResultSet = prodQuery.executeQuery();
-            if (prodNameResultSet.next()) {
-                price = prodNameResultSet.getDouble("productprice");
-                name = prodNameResultSet.getString("productname");
-                imageURL = prodNameResultSet.getString("productImageURL");
-            } else {
-                // Handle the case when no rows are returned
+            try (ResultSet prodNameResultSet = prodQuery.executeQuery()) {
+                if (prodNameResultSet.next()) {
+                    price = prodNameResultSet.getDouble("productprice");
+                    name = prodNameResultSet.getString("productname");
+                    imageURL = prodNameResultSet.getString("productImageURL");
+                    productDesc = prodNameResultSet.getString("productDesc");}
             }
         } catch (SQLException e) {
-            out.print(e); // Handle the exception appropriately
+            e.printStackTrace(); // Handle the exception appropriately
         }
-        finally{
-            closeConnection();
-        }
-
+        closeConnection();
     %>
 
     <tr>
@@ -68,14 +63,11 @@
     </tr>
 
 </table>
+<img src="<%= imageURL %>" alt="">
 
-<img src="<%= imageURL %>" alt="Display Image Failed">
+<img src="displayImage.jsp?id=<%= pId %>" alt="">
 
-<!--Display Image with displayImage.jsp -->
-<jsp:include page="displayImage.jsp">
-    <jsp:param name="id" value="<%= pId %>" />
-</jsp:include>
-<img src="displayImage.jsp" alt="Display Image Failed">
+
 
 
 <button class="btn btn-secondary">

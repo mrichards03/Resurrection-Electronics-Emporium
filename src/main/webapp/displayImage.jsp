@@ -1,7 +1,6 @@
 <%@ page trimDirectiveWhitespaces="true" import="java.sql.*,java.io.*" %><%@ include file="jdbc.jsp" %><%
 
 // Indicate that we are sending a JPG picture
-response.setContentType("image/jpeg");
 
 // Get the image id
 String id = request.getParameter("id");
@@ -30,12 +29,14 @@ try
 
 	int BUFFER_SIZE = 10000;
 	byte[] data = new byte[BUFFER_SIZE];
-
 	if (rst.next())
 	{
 		// Copy stream of bytes from database to output stream for JSP/Servlet
-		try(InputStream istream = rst.getBinaryStream(1);
-				OutputStream ostream = response.getOutputStream();){
+
+		response.reset();
+		response.setContentType("image/jpeg");
+        try(InputStream istream = rst.getBinaryStream(1);
+			OutputStream ostream = response.getOutputStream();){
 		if (istream == null) {
 			out.println("No image data found for the given ID.");
 			return;
