@@ -1,5 +1,4 @@
 <jsp:include page="header.jsp" />
-<%@ include file="jdbc.jsp"%>
 
 <%
 	String loginMsg = "";

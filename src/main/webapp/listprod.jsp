@@ -5,7 +5,7 @@
 <%@ page import="java.util.List" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF8"%>
 <jsp:include page="header.jsp" />
-<%@ include file="jdbc.jsp"%>
+<%@ page import="com.mackenzie.lab7.Connections" %>
 
 <!DOCTYPE html>
 <html>
@@ -69,39 +69,31 @@
 		{
 			System.err.println("ClassNotFoundException: " +e);
 		}
-
+		Connections con = new Connections();
 		List<Product> prods = new ArrayList<>();
 		try
 		{
-			getConnection();
+			con.getConnection();
 
 			PreparedStatement prodsQuery;
 			boolean hasName = name != null && !name.isEmpty();
 			if(hasName)
 			{
 				name = "%" + name + "%";
-				prodsQuery = con.prepareStatement("select * from product where productName like ? ");
+				prodsQuery = con.con.prepareStatement("select * from product where productName like ? ");
 				prodsQuery.setString(1, name);
 			}else
 			{
-				prodsQuery = con.prepareStatement("select * from product");
+				prodsQuery = con.con.prepareStatement("select * from product");
 			}
 			ResultSet rsprods = prodsQuery.executeQuery();
 
 			NumberFormat currFormat = NumberFormat.getCurrencyInstance();
 
 			while (rsprods.next()) {
-				int prodId = rsprods.getInt("productId");
-				String prodName = rsprods.getString("productName");
-				double dPrice = rsprods.getDouble("productPrice");
-				String priceformatted = currFormat.format(rsprods.getDouble("productPrice"));
 
-				prods.add(new Product(){{
-					id = prodId;
-					name = prodName;
-					price = dPrice;
-					priceStr = priceformatted;
-				}});
+				prods.add(new Product(rsprods.getInt("productId"), rsprods.getDouble("productPrice"),
+						0, rsprods.getString("productName")));
 
 			}
 
@@ -112,7 +104,7 @@
 		}
 		finally
 		{
-			closeConnection();
+			con.closeConnection();
 		}
 
 		return prods;

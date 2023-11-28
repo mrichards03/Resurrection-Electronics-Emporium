@@ -1,7 +1,10 @@
-        <%@ page import="java.text.NumberFormat" %>
+
 <jsp:include page="header.jsp" />
-<%@ include file="jdbc.jsp"%>
-        <%@include file="auth.jsp"%>
+<%@ page import="com.mackenzie.lab7.Order" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.time.LocalDate" %>
+<%@ page import="java.util.Map" %>
+<%@include file="auth.jsp"%>
 
 <!DOCTYPE html>
 <html>
@@ -20,27 +23,19 @@
     </thead>
 
 <%
-                getConnection();
+    List<Map.Entry<LocalDate, String>> orders = Order.getDailySales();
+    for(Map.Entry<LocalDate, String> order : orders){
 
-                NumberFormat currFormat = NumberFormat.getCurrencyInstance();
-                PreparedStatement stmt = con.prepareStatement("SELECT YEAR(orderDate) as year, MONTH(orderDate) as month, DAY(orderDate) as day, SUM(totalAmount) as totalOrderAmount FROM ordersummary GROUP BY YEAR(orderDate), MONTH(orderDate), DAY(orderDate) HAVING SUM(totalAmount) > 0 ORDER BY year ASC, month ASC, day ASC");
-                ResultSet rst = stmt.executeQuery();
-                String date = null;
-                String total=null;
-                while (rst.next()) {
-                    String date1 = rst.getString("year");
-                    String date2 = rst.getString("month");
-                    String date3 = rst.getString("day");
-                    date = String.format("%s/%s/%s", date1, date2, date3);
-                    total = currFormat.format(rst.getDouble("totalOrderAmount"));
-
-                %>
+%>
 <tr>
-    <td><%=date%></td>
-    <td><%=total%></td>
+    <td><%=order.getKey()%></td>
+    <td><%=order.getValue()%></td>
 </tr>
 <% } %>
 
 </body>
 </html>
+
+<%!
+%>
 

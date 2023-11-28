@@ -1,7 +1,7 @@
 <%@ page import="java.sql.*" %>
 <%@ page import="java.util.Scanner" %>
 <%@ page import="java.io.File" %>
-<%@ include file="jdbc.jsp" %>
+<%@ page import="com.mackenzie.lab7.Connections" %>
 
 <html>
 <head>
@@ -23,7 +23,7 @@ catch (java.lang.ClassNotFoundException e)
 
 String fileName = "/usr/local/tomcat/webapps/shop/ddl/SQLServer_orderdb.ddl";
 
-try ( Connection con = DriverManager.getConnection(urlForLoadData, uid, pw); )
+try ( Connection con = DriverManager.getConnection(Connections.urlForLoadData, Connections.uid, Connections.pw); )
 {      
     // Create statement
     Statement stmt = con.createStatement();

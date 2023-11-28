@@ -7,11 +7,11 @@
 
 <%@ include file="header.jsp" %>
 <%@ include file="auth.jsp"%>
-<%@ page import="com.mackenzie.lab7.Customer" %>
+<%@ page import="com.mackenzie.lab7.User" %>
 
 <%
 	String id = (String) session.getAttribute("authenticatedUser");
-	Customer cust = getCustomerInfo(id);
+	User cust = User.getUserInfo(id);
 %>
 
 <form method="post" action="custChanged.jsp">
@@ -81,48 +81,15 @@
 		<tr>
 			<td><strong>User Id</strong></td>
 			<td>
-				<input type="text" name="userId" value="<%=cust.userId%>">
+				<input type="text" name="userId" value="<%=cust.userName%>">
 			</td>
 		</tr>
 		</tbody>
 	</table>
 	<button class="btn btn-success" type="submit">Save</button>
-	<button class="btn btn-danger" type="reset">Reset</button>
+	<button class="btn btn-danger" type="reset">Cancel</button>
 </form>
 
 
 </body>
 </html>
-
-<%!
-	private Customer getCustomerInfo(String id) {
-		Customer customer = new Customer();
-		try {
-			getConnection();
-
-			String sql = "SELECT * FROM customer WHERE customerId = ?";
-			PreparedStatement pstmt = con.prepareStatement(sql);
-			pstmt.setString(1, id);
-			ResultSet rs = pstmt.executeQuery();
-			if(rs.next()){
-				customer.id = rs.getInt("customerId");
-				customer.firstName = rs.getString("firstName");
-				customer.lastName = rs.getString("lastName");
-				customer.address = rs.getString("address");
-				customer.city = rs.getString("city");
-				customer.state = rs.getString("state");
-				customer.postCode = rs.getString("postalCode");
-				customer.phone = rs.getString("phonenum");
-				customer.email = rs.getString("email");
-				customer.userId = rs.getString("userid");
-				customer.country = rs.getString("country");
-			}
-
-		}catch (Exception e) {
-			System.err.println(e);
-		}finally {
-			closeConnection();
-		}
-		return customer;
-	}
-%>

@@ -1,5 +1,6 @@
 <%@ page language="java" import="java.io.*"%>
 <%@ page import="java.sql.*" %>
+<%@ page import="com.mackenzie.lab7.Connections" %>
 <%@ include file="header.jsp"%>
 
 
@@ -39,17 +40,17 @@
 			session.setAttribute("loginMessage","Invalid username/password");
 			return null;
 		}
-
+		Connections con = new Connections();
         try
 		{
-					getConnection();  // Make database connection
+					con.getConnection();  // Make database connection
 
-                    PreparedStatement CIDQuery = con.prepareStatement("SELECT customerId FROM customer WHERE userid = ? AND password = ?");
+                    PreparedStatement CIDQuery = con.con.prepareStatement("SELECT userId FROM users WHERE userName = ? AND password = ?");
                     CIDQuery.setString(1, username);
                     CIDQuery.setString(2, password);
                     ResultSet rst = CIDQuery.executeQuery();
                     rst.next();
-                    retStr = rst.getString("customerId");
+                    retStr = rst.getString("userId");
 
 
 		}
@@ -58,7 +59,7 @@
 			out.println(e);
 		}
 		finally {
-			closeConnection(); // Close database connection
+			con.closeConnection(); // Close database connection
 		}
 
 

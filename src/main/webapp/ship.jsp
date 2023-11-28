@@ -2,7 +2,7 @@
 <%@ page import="java.text.NumberFormat" %>
 <%@ page import="java.util.*" %>
 <jsp:include page="header.jsp"/>
-<%@ include file="jdbc.jsp" %>
+<%@ page import="com.mackenzie.lab7.Connections" %>
 
 <html>
 <head>
@@ -67,17 +67,17 @@
 
 	private List<ShippedItem> shipItems(String orderId){
 		List<ShippedItem> items = new ArrayList<>();
-
+		Connections con = new Connections();
 		try{
-			getConnection();
+			con.getConnection();
 
-			PreparedStatement pstmt = con.prepareStatement("SELECT * FROM orderproduct where orderId = ?");
+			PreparedStatement pstmt = con.con.prepareStatement("SELECT * FROM orderproduct where orderId = ?");
 			pstmt.setString(1, orderId);
 			ResultSet rs = pstmt.executeQuery();
 
-			con.setAutoCommit(false);
+			con.con.setAutoCommit(false);
 
-			PreparedStatement newShipQuery = con.prepareStatement("INSERT INTO shipment (warehouseId, shipmentDate) VALUES (1,?)");
+			PreparedStatement newShipQuery = con.con.prepareStatement("INSERT INTO shipment (warehouseId, shipmentDate) VALUES (1,?)");
 			newShipQuery.setDate(1, new java.sql.Date(new java.util.Date().getTime()));
 			newShipQuery.executeUpdate();
 
@@ -88,7 +88,7 @@
 					productId = rs.getString("productId");
 					quantity = rs.getInt("quantity");
 				}};
-				PreparedStatement prodInventoryQuery = con.prepareStatement("SELECT * FROM productinventory where productId = ? and warehouseId = 1");
+				PreparedStatement prodInventoryQuery = con.con.prepareStatement("SELECT * FROM productinventory where productId = ? and warehouseId = 1");
 				prodInventoryQuery.setString(1, item.productId);
 				ResultSet prodInventory = prodInventoryQuery.executeQuery();
 
@@ -96,7 +96,7 @@
 					item.success = false;
 					item.errMessage = "Shipment not done. Insufficient inventory for product id: " + item.productId;
 					items.add(item);
-					con.rollback();
+					con.con.rollback();
 					break;
 				}
 
@@ -106,11 +106,11 @@
 					item.success = false;
 					item.errMessage = "Shipment not done. Insufficient inventory for product id: " + item.productId;
 					items.add(item);
-					con.rollback();
+					con.con.rollback();
 					break;
 				}
 				item.newInventory = item.inventory - item.quantity;
-				PreparedStatement updateInventoryQuery = con.prepareStatement("UPDATE productinventory SET quantity = ? WHERE productId = ? and warehouseId = 1");
+				PreparedStatement updateInventoryQuery = con.con.prepareStatement("UPDATE productinventory SET quantity = ? WHERE productId = ? and warehouseId = 1");
 				updateInventoryQuery.setInt(1, item.newInventory);
 				updateInventoryQuery.setString(2, item.productId);
 				updateInventoryQuery.executeUpdate();
@@ -121,18 +121,18 @@
 
 
 			if(items.isEmpty() || count > 3){
-				con.rollback();
+				con.con.rollback();
 				return items;
 			}
 
-			con.commit();
-			con.setAutoCommit(true);
+			con.con.commit();
+			con.con.setAutoCommit(true);
 
 		}catch (SQLException e){
 			System.err.print(e);
 		}
 		finally {
-			closeConnection();
+			con.closeConnection();
 		}
 
 		return items;

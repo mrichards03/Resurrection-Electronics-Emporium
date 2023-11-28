@@ -14,11 +14,12 @@ DROP TABLE product;
 DROP TABLE category;
 DROP TABLE ordersummary;
 DROP TABLE paymentmethod;
-DROP TABLE customer;
+DROP TABLE users;
+DROP TABLE brand;
 
 
-CREATE TABLE customer (
-    customerId          INT IDENTITY,
+CREATE TABLE users (
+    userId              INT IDENTITY,
     firstName           VARCHAR(40),
     lastName            VARCHAR(40),
     email               VARCHAR(50),
@@ -28,9 +29,10 @@ CREATE TABLE customer (
     state               VARCHAR(20),
     postalCode          VARCHAR(20),
     country             VARCHAR(40),
-    userid              VARCHAR(20),
+    userName            VARCHAR(20),
     password            VARCHAR(30),
-    PRIMARY KEY (customerId)
+    AccessLevel         INT,
+    PRIMARY KEY (userId)
 );
 
 CREATE TABLE paymentmethod (
@@ -40,7 +42,7 @@ CREATE TABLE paymentmethod (
     paymentExpiryDate   DATE,
     customerId          INT,
     PRIMARY KEY (paymentMethodId),
-    FOREIGN KEY (customerId) REFERENCES customer(customerid)
+    FOREIGN KEY (customerId) REFERENCES users(userId)
         ON UPDATE CASCADE ON DELETE CASCADE 
 );
 
@@ -53,9 +55,9 @@ CREATE TABLE ordersummary (
     shiptoState         VARCHAR(20),
     shiptoPostalCode    VARCHAR(20),
     shiptoCountry       VARCHAR(40),
-    customerId          INT,
+    userId              INT,
     PRIMARY KEY (orderId),
-    FOREIGN KEY (customerId) REFERENCES customer(customerid)
+    FOREIGN KEY (userId) REFERENCES users(userId)
         ON UPDATE CASCADE ON DELETE CASCADE 
 );
 
@@ -63,6 +65,12 @@ CREATE TABLE category (
     categoryId          INT IDENTITY,
     categoryName        VARCHAR(50),    
     PRIMARY KEY (categoryId)
+);
+
+CREATE TABLE brand (
+    brandId             INT IDENTITY,
+    brandName           VARCHAR(50),
+    PRIMARY KEY (brandId)
 );
 
 CREATE TABLE product (
@@ -73,8 +81,10 @@ CREATE TABLE product (
     productImage        VARBINARY(MAX),
     productDesc         VARCHAR(1000),
     categoryId          INT,
+    brandId             INT,
     PRIMARY KEY (productId),
-    FOREIGN KEY (categoryId) REFERENCES category(categoryId)
+    FOREIGN KEY (categoryId) REFERENCES category(categoryId),
+    FOREIGN KEY (brandId) REFERENCES brand(brandId)
 );
 
 CREATE TABLE orderproduct (
@@ -137,7 +147,7 @@ CREATE TABLE review (
     productId           INT,
     reviewComment       VARCHAR(1000),          
     PRIMARY KEY (reviewId),
-    FOREIGN KEY (customerId) REFERENCES customer(customerId)
+    FOREIGN KEY (customerId) REFERENCES users(userId)
         ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (productId) REFERENCES product(productId)
         ON UPDATE CASCADE ON DELETE CASCADE
@@ -194,31 +204,31 @@ INSERT INTO productInventory(productId, warehouseId, quantity, price) VALUES (8,
 INSERT INTO productInventory(productId, warehouseId, quantity, price) VALUES (9, 1, 2, 97);
 INSERT INTO productInventory(productId, warehouseId, quantity, price) VALUES (10, 1, 3, 31);
 
-INSERT INTO customer (firstName, lastName, email, phonenum, address, city, state, postalCode, country, userid, password) VALUES ('Arnold', 'Anderson', 'a.anderson@gmail.com', '204-111-2222', '103 AnyWhere Street', 'Winnipeg', 'MB', 'R3X 45T', 'Canada', 'arnold' , '304Arnold!');
-INSERT INTO customer (firstName, lastName, email, phonenum, address, city, state, postalCode, country, userid, password) VALUES ('Bobby', 'Brown', 'bobby.brown@hotmail.ca', '572-342-8911', '222 Bush Avenue', 'Boston', 'MA', '22222', 'United States', 'bobby' , '304Bobby!');
-INSERT INTO customer (firstName, lastName, email, phonenum, address, city, state, postalCode, country, userid, password) VALUES ('Candace', 'Cole', 'cole@charity.org', '333-444-5555', '333 Central Crescent', 'Chicago', 'IL', '33333', 'United States', 'candace' , '304Candace!');
-INSERT INTO customer (firstName, lastName, email, phonenum, address, city, state, postalCode, country, userid, password) VALUES ('Darren', 'Doe', 'oe@doe.com', '250-807-2222', '444 Dover Lane', 'Kelowna', 'BC', 'V1V 2X9', 'Canada', 'darren' , '304Darren!');
-INSERT INTO customer (firstName, lastName, email, phonenum, address, city, state, postalCode, country, userid, password) VALUES ('Elizabeth', 'Elliott', 'engel@uiowa.edu', '555-666-7777', '555 Everwood Street', 'Iowa City', 'IA', '52241', 'United States', 'beth' , '304Beth!');
+INSERT INTO users (firstName, lastName, email, phonenum, address, city, state, postalCode, country, userName, password, AccessLevel) VALUES ('Arnold', 'Anderson', 'a.anderson@gmail.com', '204-111-2222', '103 AnyWhere Street', 'Winnipeg', 'MB', 'R3X 45T', 'Canada', 'arnold' , '304Arnold!', 0);
+INSERT INTO users (firstName, lastName, email, phonenum, address, city, state, postalCode, country, userName, password, AccessLevel) VALUES ('Bobby', 'Brown', 'bobby.brown@hotmail.ca', '572-342-8911', '222 Bush Avenue', 'Boston', 'MA', '22222', 'United States', 'bobby' , '304Bobby!', 1);
+INSERT INTO users (firstName, lastName, email, phonenum, address, city, state, postalCode, country, userName, password, AccessLevel) VALUES ('Candace', 'Cole', 'cole@charity.org', '333-444-5555', '333 Central Crescent', 'Chicago', 'IL', '33333', 'United States', 'candace' , '304Candace!', 1);
+INSERT INTO users (firstName, lastName, email, phonenum, address, city, state, postalCode, country, userName, password, AccessLevel) VALUES ('Darren', 'Doe', 'oe@doe.com', '250-807-2222', '444 Dover Lane', 'Kelowna', 'BC', 'V1V 2X9', 'Canada', 'darren' , '304Darren!', 1);
+INSERT INTO users (firstName, lastName, email, phonenum, address, city, state, postalCode, country, userName, password, AccessLevel) VALUES ('Elizabeth', 'Elliott', 'engel@uiowa.edu', '555-666-7777', '555 Everwood Street', 'Iowa City', 'IA', '52241', 'United States', 'beth' , '304Beth!', 1);
 
 -- Order 1 can be shipped as have enough inventory
 DECLARE @orderId int
-INSERT INTO ordersummary (customerId, orderDate, totalAmount) VALUES (1, '2019-10-15 10:25:55', 91.70)
+INSERT INTO ordersummary (userId, orderDate, totalAmount) VALUES (1, '2019-10-15 10:25:55', 91.70)
 SELECT @orderId = @@IDENTITY
 INSERT INTO orderproduct (orderId, productId, quantity, price) VALUES (@orderId, 1, 1, 18)
 INSERT INTO orderproduct (orderId, productId, quantity, price) VALUES (@orderId, 5, 2, 21.35)
 INSERT INTO orderproduct (orderId, productId, quantity, price) VALUES (@orderId, 10, 1, 31);
 
-INSERT INTO ordersummary (customerId, orderDate, totalAmount) VALUES (2, '2019-10-16 18:00:00', 106.75)
+INSERT INTO ordersummary (userId, orderDate, totalAmount) VALUES (2, '2019-10-16 18:00:00', 106.75)
 SELECT @orderId = @@IDENTITY
 INSERT INTO orderproduct (orderId, productId, quantity, price) VALUES (@orderId, 5, 5, 21.35);
 
 -- Order 3 cannot be shipped as do not have enough inventory for item 7
-INSERT INTO ordersummary (customerId, orderDate, totalAmount) VALUES (3, '2019-10-15 3:30:22', 140)
+INSERT INTO ordersummary (userId, orderDate, totalAmount) VALUES (3, '2019-10-15 3:30:22', 140)
 SELECT @orderId = @@IDENTITY
 INSERT INTO orderproduct (orderId, productId, quantity, price) VALUES (@orderId, 6, 2, 25)
 INSERT INTO orderproduct (orderId, productId, quantity, price) VALUES (@orderId, 7, 3, 30);
 
-INSERT INTO ordersummary (customerId, orderDate, totalAmount) VALUES (2, '2019-10-17 05:45:11', 327.85)
+INSERT INTO ordersummary (userId, orderDate, totalAmount) VALUES (2, '2019-10-17 05:45:11', 327.85)
 SELECT @orderId = @@IDENTITY
 INSERT INTO orderproduct (orderId, productId, quantity, price) VALUES (@orderId, 3, 4, 10)
 INSERT INTO orderproduct (orderId, productId, quantity, price) VALUES (@orderId, 8, 3, 40)
@@ -226,7 +236,7 @@ INSERT INTO orderproduct (orderId, productId, quantity, price) VALUES (@orderId,
 INSERT INTO orderproduct (orderId, productId, quantity, price) VALUES (@orderId, 28, 2, 21.05)
 INSERT INTO orderproduct (orderId, productId, quantity, price) VALUES (@orderId, 29, 4, 14);
 
-INSERT INTO ordersummary (customerId, orderDate, totalAmount) VALUES (5, '2019-10-15 10:25:55', 277.40)
+INSERT INTO ordersummary (userId, orderDate, totalAmount)VALUES (5, '2019-10-15 10:25:55', 277.40)
 SELECT @orderId = @@IDENTITY
 INSERT INTO orderproduct (orderId, productId, quantity, price) VALUES (@orderId, 5, 4, 21.35)
 INSERT INTO orderproduct (orderId, productId, quantity, price) VALUES (@orderId, 19, 2, 81)

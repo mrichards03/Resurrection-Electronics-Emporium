@@ -1,4 +1,4 @@
-<%@ include file="jdbc.jsp"%>
+<%@ page import="com.mackenzie.lab7.User" %>
 <%
     String username = session.getAttribute("authenticatedUser") == null ?
             null : session.getAttribute("authenticatedUser").toString();
@@ -104,34 +104,14 @@
             LoginLink = "login.jsp";
             LoggedIn = false;
         }else{
+            User user = User.getUserInfo(username);
             LoginMsg = "Logout";
             LoginLink = "logout.jsp";
-            custName = getCustName(username);
+            custName = user.firstName;
             LoggedIn = true;
         }
     }
 
-    public String getCustName(String id){
-        try{
-            getConnection();
-
-            String query = "SELECT firstname FROM customer WHERE customerId = ?";
-            PreparedStatement ps = con.prepareStatement(query);
-            ps.setString(1, id);
-            ResultSet rs = ps.executeQuery();
-            if(rs.next()){
-                return rs.getString("firstname");
-            }
-
-        }catch (Exception e){
-            System.err.println(e);
-        }
-        finally {
-            closeConnection();
-        }
-
-        return null;
-    }
 %>
 
 

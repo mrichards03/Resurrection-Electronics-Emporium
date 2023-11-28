@@ -1,12 +1,95 @@
 package com.mackenzie.lab7;
 
+import java.sql.*;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Order {
     public int id;
-    public String date;
+    public LocalDateTime date;
     public int custId;
     public String custName;
-    public String total;
+    public String totalStr;
+    public double total;
     public ArrayList<Product> products;
+
+    public Order(int id, LocalDateTime date, int custId, String custName, String totalStr, double total) {
+        this.id = id;
+        this.date = date;
+        this.custId = custId;
+        this.custName = custName;
+        this.totalStr = totalStr;
+        this.total = total;
+        products = new ArrayList<>();
+    }
+    public static List<Order> getOrders(){
+
+        List<Order> orders = new ArrayList<>();
+        Connections con = new Connections();
+        try{
+            con.getConnection();
+
+            NumberFormat currFormat = NumberFormat.getCurrencyInstance();
+            PreparedStatement stmt = con.con.prepareStatement("SELECT * FROM ordersummary join users on ordersummary.userID = users.userId");
+            ResultSet rst = stmt.executeQuery();
+
+            while (rst.next()) {
+                double total = rst.getDouble("totalAmount");
+                Order order = new Order(rst.getInt("orderId"),
+                        rst.getTimestamp("orderDate").toLocalDateTime(),
+                        rst.getInt("userId"),
+                        rst.getString("firstname") + " " + rst.getString("lastname"),
+                        currFormat.format(total), total);
+
+                PreparedStatement prodsQuery = con.con.prepareStatement("select * from orderproduct op join product p on op.productId = p.productId where orderId = ?");
+                prodsQuery.setInt(1, order.id);
+                ResultSet prods = prodsQuery.executeQuery();
+
+                while (prods.next()) {
+                    order.products.add(new Product(prods.getInt("productId"),
+                            prods.getDouble("price"),
+                            prods.getInt("quantity"), null));
+                }
+
+                orders.add(order);
+            }
+
+        }catch (Exception e){
+            System.err.println("SQLException: " + e);
+        }
+        finally {
+            con.closeConnection();
+        }
+
+        return orders;
+    }
+
+    public static List<Map.Entry<LocalDate, String>> getDailySales(){
+        List<Map.Entry<LocalDate, String>> groupedOrders = new ArrayList<>();
+        NumberFormat currFormat = NumberFormat.getCurrencyInstance();
+        try{
+            List<Order> o = getOrders();
+            groupedOrders = o.stream()
+                    .collect(Collectors.groupingBy(
+                            order -> order.date.toLocalDate(), //
+                            Collectors.summingDouble(order -> order.total) // Sum total for each group
+                    )).entrySet()
+                    .stream()
+                    .filter(entry -> entry.getValue() > 0) // Filter out empty totals
+                    .sorted(Map.Entry.comparingByKey())
+                    .map(entry -> Map.entry(entry.getKey(), currFormat.format(entry.getValue())))
+                    .collect(Collectors.toList());
+
+        }catch (Exception e){
+            System.err.println(e);
+        }
+
+        return groupedOrders;
+    }
 }

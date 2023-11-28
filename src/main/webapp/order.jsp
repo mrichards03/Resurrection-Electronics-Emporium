@@ -4,6 +4,7 @@
 <%@ page import="java.util.*" %>
 <%@ page import="java.time.LocalDateTime" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF8"%>
+<%@ page import="com.mackenzie.lab7.Connections" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -13,13 +14,13 @@
 <body>
 
 <%
-// Get customer id
+// Get user id
 @SuppressWarnings({"unchecked"})
 HashMap<String, ArrayList<Object>> productList = (HashMap<String, ArrayList<Object>>) session.getAttribute("productList");
-
+Connections con = new Connections();
         try
         {
-                getConnection();
+                con.getConnection();
 
                 String custId = request.getParameter("customerId");
                 boolean hasCustId = custId != null && !custId.isEmpty() && !custId.equals("-1");
@@ -31,7 +32,7 @@ HashMap<String, ArrayList<Object>> productList = (HashMap<String, ArrayList<Obje
 
                 if(hasCustId && productList != null && !productList.isEmpty()){
                         intCustId = Integer.parseInt(custId);
-                        custQuery = con.prepareStatement("Select * from customer where customerId = ?");
+                        custQuery = con.con.prepareStatement("Select * from users where userId = ?");
                         custQuery.setInt(1, intCustId);
                         custs = custQuery.executeQuery();
                         if(!custs.next()){throw new Exception("No Customers matching that ID");}
@@ -43,7 +44,7 @@ HashMap<String, ArrayList<Object>> productList = (HashMap<String, ArrayList<Obje
                 }
 
                 Calendar cal = Calendar.getInstance();
-                PreparedStatement pstmt = con.prepareStatement("insert into ordersummary (orderdate, totalAmount, customerId) values(?, 00.00, ?);", Statement.RETURN_GENERATED_KEYS);
+                PreparedStatement pstmt = con.con.prepareStatement("insert into ordersummary (orderdate, totalAmount, userId) values(?, 00.00, ?);", Statement.RETURN_GENERATED_KEYS);
 
                 pstmt.setTimestamp(1, new java.sql.Timestamp(cal.getTimeInMillis()));
                 pstmt.setInt(2, intCustId);
@@ -77,7 +78,7 @@ HashMap<String, ArrayList<Object>> productList = (HashMap<String, ArrayList<Obje
                         int qty = Integer.parseInt(product.get(3).toString());
                         double pricetimesqty = price * qty;
 
-                        PreparedStatement prod = con.prepareStatement("Insert into orderproduct values(?, ?, ?, ?)");
+                        PreparedStatement prod = con.con.prepareStatement("Insert into orderproduct values(?, ?, ?, ?)");
                         prod.setInt(1, orderId);
                         prod.setInt(2, productId);
                         prod.setInt(3, qty);
@@ -86,7 +87,7 @@ HashMap<String, ArrayList<Object>> productList = (HashMap<String, ArrayList<Obje
 
                         total += pricetimesqty;
 
-                        PreparedStatement prodQuery = con.prepareStatement("Select productname from product where productId = ?");
+                        PreparedStatement prodQuery = con.con.prepareStatement("Select productname from product where productId = ?");
                         prodQuery.setInt(1, productId);
                         ResultSet prodName = prodQuery.executeQuery();
                         prodName.next();
@@ -103,7 +104,7 @@ HashMap<String, ArrayList<Object>> productList = (HashMap<String, ArrayList<Obje
 
         <%
                 }
-                PreparedStatement orderUpdate = con.prepareStatement("Update ordersummary set totalAmount = ? where orderid = ?");
+                PreparedStatement orderUpdate = con.con.prepareStatement("Update ordersummary set totalAmount = ? where orderid = ?");
                 orderUpdate.setDouble(1, total);
                 orderUpdate.setInt(2, orderId);
                 orderUpdate.execute();
@@ -117,7 +118,7 @@ HashMap<String, ArrayList<Object>> productList = (HashMap<String, ArrayList<Obje
 
         <h1>Order completed.  Will be shipped soon...</h1>
         <h1>Your order reference number is: <%=orderId%></h1>
-        <h1>Shipping to customer: <%=intCustId%> Name: <%=custName%></h1>
+        <h1>Shipping to user: <%=intCustId%> Name: <%=custName%></h1>
 
         <%
                 session.setAttribute("productList", new HashMap<String, ArrayList<Object>>()); // Clear cart if order placed successfully
@@ -140,7 +141,7 @@ HashMap<String, ArrayList<Object>> productList = (HashMap<String, ArrayList<Obje
 
         }
 finally {
-                closeConnection();
+                con.closeConnection();
         }
 
 %>

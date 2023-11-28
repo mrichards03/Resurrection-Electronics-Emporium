@@ -1,4 +1,6 @@
-<%@ page trimDirectiveWhitespaces="true" import="java.sql.*,java.io.*" %><%@ include file="jdbc.jsp" %><%
+<%@ page trimDirectiveWhitespaces="true" import="java.sql.*,java.io.*" %>
+<%@ page import="com.mackenzie.lab7.Connections" %>
+<%
 
 // Indicate that we are sending a JPG picture
 
@@ -18,12 +20,12 @@ catch(Exception e)
 }
 
 String sql = "SELECT productImage FROM Product P  WHERE productId = ?";
-
+Connections con = new Connections();
 try
 {
-	getConnection();
+	con.getConnection();
 
-	PreparedStatement stmt = con.prepareStatement(sql);
+	PreparedStatement stmt = con.con.prepareStatement(sql);
 	stmt.setInt(1,idVal);
 	ResultSet rst = stmt.executeQuery();
 
@@ -63,6 +65,6 @@ catch (SQLException ex) {
 }
 finally
 {
-	closeConnection();
+	con.closeConnection();
 }
 %>
