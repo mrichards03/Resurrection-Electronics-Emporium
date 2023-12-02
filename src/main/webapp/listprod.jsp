@@ -53,6 +53,30 @@
 	}
 %>
 </table>
+<h2>Recommended Products</h2>
+<table class="table table-striped">
+	<tr>
+		<th></th>
+		<th>Product Name</th>
+		<th>Price</th>
+	</tr>
+
+		<%
+	for(Product prod : prods)
+	{
+%>
+	<tr>
+		<td>
+			<a href="addcart.jsp?id=<%=prod.id%>&name=<%=prod.name%>&price=<%=prod.price%>" class="btn btn-success">Add to Cart</a>
+		</td>
+		<td>
+			<a href="product.jsp?id=<%=prod.id%>"><%=prod.name%></a>
+		</td>
+		<td><%=prod.priceStr%></td>
+	</tr>
+		<%
+	}
+%>
 
 </body>
 </html>
