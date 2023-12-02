@@ -162,6 +162,12 @@ INSERT INTO category(categoryName) VALUES ('Seafood');
 INSERT INTO category(categoryName) VALUES ('Confections');
 INSERT INTO category(categoryName) VALUES ('Grains/Cereals');
 
+INSERT INTO brand(brandName) VALUES ('Samsung');
+INSERT INTO brand(brandName) VALUES ('Apple');
+INSERT INTO brand(brandName) VALUES ('HP');
+INSERT INTO brand(brandName) VALUES ('Lenovo');
+INSERT INTO brand(brandName) VALUES ('Aser');
+
 INSERT product(productName, categoryId, productDesc, productPrice) VALUES ('Chai', 1, '10 boxes x 20 bags',18.00);
 INSERT product(productName, categoryId, productDesc, productPrice) VALUES ('Chang',1,'24 - 12 oz bottles',19.00);
 INSERT product(productName, categoryId, productDesc, productPrice) VALUES ('Aniseed Syrup',2,'12 - 550 ml bottles',10.00);

@@ -61,7 +61,7 @@ services:
                exit 0         
     app:
         build:
-            context: src/main
+            context: ./
             dockerfile: Dockerfile
         image: cosc304-java
         depends_on:

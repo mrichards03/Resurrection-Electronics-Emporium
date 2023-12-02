@@ -1,4 +1,5 @@
 <%@ page import="com.mackenzie.lab7.User" %>
+<%@ page import="com.mackenzie.lab7.AccessLevel" %>
 <%
     String username = session.getAttribute("authenticatedUser") == null ?
             null : session.getAttribute("authenticatedUser").toString();
@@ -68,6 +69,11 @@
                 <li class="nav-item">
                     <a class="nav-link" href="showcart.jsp" aria-current="page">Cart</a>
                 </li>
+                <% if(LoggedIn && user.accessLevel == AccessLevel.Admin){ %>
+                <li class="nav-item">
+                    <a class="nav-link" href="admin.jsp" aria-current="page">Sales</a>
+                </li>
+                <% } %>
             </ul>
             <div class="d-flex">
                 <% if(LoggedIn){ %>
@@ -97,6 +103,7 @@
     String LoginLink = "";
     String custName = "";
     boolean LoggedIn = false;
+    User user;
 
     public void onLoginChange(String username){
         if(username == null || username.isEmpty()){
@@ -104,7 +111,7 @@
             LoginLink = "login.jsp";
             LoggedIn = false;
         }else{
-            User user = User.getUserInfo(username);
+            user = User.getUserInfo(username);
             LoginMsg = "Logout";
             LoginLink = "logout.jsp";
             custName = user.firstName;
