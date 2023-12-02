@@ -1,11 +1,12 @@
-<%@ page import="java.sql.*" %>
-<%@ page import="java.text.NumberFormat" %>
-<%@ page import="java.util.ArrayList" %>
 <%@ page import="com.mackenzie.lab7.Product" %>
 <%@ page import="java.util.List" %>
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF8"%>
-<jsp:include page="header.jsp" />
 <%@ page import="com.mackenzie.lab7.Connections" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="java.sql.*" %>
+<%@ page import="java.text.NumberFormat" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF8"%>
+<%@ include file="header.jsp" %>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 
 <!DOCTYPE html>
 <html>
@@ -13,47 +14,65 @@
 <title>YOUR NAME Grocery</title>
 </head>
 <body>
+<div class="m-4">
+	<h1>Search for the products you want to buy:</h1>
 
-<h1>Search for the products you want to buy:</h1>
+	<form method="get" action="listprod.jsp">
+	<input type="text" name="productName" size="50">
+	<input class="btn btn-secondary" type="submit" value="Submit"> <input class="btn btn-secondary" type="reset" value="Reset"> (Leave blank for all products)
+	</form>
 
-<form method="get" action="listprod.jsp">
-<input type="text" name="productName" size="50">
-<input class="btn btn-secondary" type="submit" value="Submit"> <input class="btn btn-secondary" type="reset" value="Reset"> (Leave blank for all products)
-</form>
+	<% // Get product name to search for
+		String name = request.getParameter("productName");
+		List<Product> prods = init(name);
+	%>
+	</br>
+	<% if(name == null || name.isEmpty()) { %>
+		<h2>All Products</h2>
+	<% } %>
 
-<% // Get product name to search for
-	String name = request.getParameter("productName");
-	List<Product> prods = init(name);
-%>
-</br>
-<h2>All Products</h2>
-</br>
-<table class="table table-striped">
-	<tr>
-		<th></th>
-		<th>Product Name</th>
-		<th>Price</th>
-	</tr>
+	<% if(user != null && user.accessLevel == AccessLevel.Admin) { %>
+		<div class="d-flex justify-content-end">
+			<a href="newProduct.jsp" class="btn btn-primary mb-2">
+				Add Product
+			</a>
+		</div>
 
-<%
-	for(Product prod : prods)
-	{
-%>
+	<% } %>
+
+	<table class="table table-striped">
 		<tr>
-			<td>
-				<a href="addcart.jsp?id=<%=prod.id%>&name=<%=prod.name%>&price=<%=prod.price%>" class="btn btn-success">Add to Cart</a>
-			</td>
-			<td>
-				<a href="product.jsp?id=<%=prod.id%>"><%=prod.name%></a>
-			</td>
-			<td><%=prod.priceStr%></td>
+			<th></th>
+			<th>Product Name</th>
+			<th>Price</th>
+			<th></th>
 		</tr>
 
-<%
-	}
-%>
-</table>
+	<%
+		for(Product prod : prods)
+		{
+	%>
+			<tr>
+				<td>
+					<a href="addcart.jsp?id=<%=prod.id%>&name=<%=prod.name%>&price=<%=prod.price%>" class="btn btn-success">Add to Cart</a>
+				</td>
+				<td>
+					<a href="product.jsp?id=<%=prod.id%>"><%=prod.name%></a>
+				</td>
+				<td><%=prod.priceStr%></td>
+				<% if(user != null && user.accessLevel == AccessLevel.Admin) { %>
+					<td>
+						<a href="delete-Product?id=<%=prod.id%>" class="btn btn-danger">
+							<i class="fa fa-trash-o fa-lg"></i></a>
+					</td>
+				<% } %>
+			</tr>
 
+	<%
+		}
+	%>
+	</table>
+</div>
 </body>
 </html>
 
