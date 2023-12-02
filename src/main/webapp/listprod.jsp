@@ -62,7 +62,9 @@
 	</tr>
 
 		<%
-	for(Product prod : prods)
+
+		List<Product> recProds = getRecs(session);
+	for(Product prod : recProds)
 	{
 %>
 	<tr>
@@ -82,7 +84,65 @@
 </html>
 
 <%!
+	public List<Product> getRecs(HttpSession session){
+		String username;
+		List<Product> recProds = new ArrayList<>();
+		if(session.getAttribute("authenticatedUser") == null){
+			return null;
+		}
+		else{
+			username = session.getAttribute("authenticatedUser").toString();
+		}
+		try
+		{	// Load driver class
+			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+		}
+		catch (java.lang.ClassNotFoundException e)
+		{
+			System.err.println("ClassNotFoundException: " +e);
+		}
+		Connections con = new Connections();
+		try
+		{
+			con.getConnection();
 
+			PreparedStatement topBrand = con.con.prepareStatement("SELECT brandID from (SELECT brandID FROM ordersummary join users on ordersummary.userID = users.userId join orderproduct on ordersummary.orderID = orderproduct.orderID join product on orderproduct.productID = product.ProductID where userName = ?) where count(brandID) >= count(ANY)");
+				topBrand.setString(1, username);
+				ResultSet brand = topBrand.executeQuery();
+				String brandID = brand.getString("brandID");
+			PreparedStatement topCategory = con.con.prepareStatement("SELECT categoryID from (SELECT categoryID FROM ordersummary join users on ordersummary.userID = users.userId join orderproduct on ordersummary.orderID = orderproduct.orderID join product on orderproduct.productID = product.ProductID where userName = ?) where count(categoryID) >= count(ANY)");
+				topBrand.setString(1, username);
+				ResultSet category = topCategory.executeQuery();
+				String categoryID = category.getString("categoryID");
+			PreparedStatement getRecProds1 = con.con.prepareStatement("SELECT * from product where brandID = ? and categoryID = ?");
+				getRecProds1.setString(1, brandID);
+				getRecProds1.setString(2, categoryID);
+				ResultSet recProds1 = getRecProds1.executeQuery();
+
+
+
+			NumberFormat currFormat = NumberFormat.getCurrencyInstance();
+
+			while (recProds1.next()) {
+
+				recProds.add(new Product(recProds1.getInt("productId"), recProds1.getDouble("productPrice"),
+						0, recProds1.getString("productName")));
+
+			}
+
+
+
+		}
+		catch (SQLException ex)
+		{
+			System.err.println("SQLException: " + ex);
+		}
+		finally
+		{
+			con.closeConnection();
+		}
+		return recProds;
+	}
 	public List<Product> init(String name)
 	{
 		try
