@@ -3,6 +3,7 @@ package com.mackenzie.lab7;
 import java.io.InputStream;
 import java.sql.Blob;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 public class Product {
     public int id;
@@ -35,7 +36,7 @@ public class Product {
 
     }
 
-    public static boolean addProduct(Product product){
+    public static boolean addProduct(Product product) throws SQLException {
         Connections connections = new Connections();
         boolean success = false;
         try {
@@ -52,18 +53,19 @@ public class Product {
             pstmt.setBlob(4, product.image);
             pstmt.setInt(5, product.category.id);
             pstmt.setInt(6, product.brand.id);
-            pstmt.executeUpdate();
-            success = true;
+            int count = pstmt.executeUpdate();
+            success = count > 0;
 
         }catch (Exception e) {
             System.err.println(e);
+            throw e;
         }finally {
             connections.closeConnection();
         }
         return success;
     }
 
-    public static boolean deleteProduct(int id){
+    public static boolean deleteProduct(int id) throws SQLException {
         Connections connections = new Connections();
         boolean success = false;
         try {
@@ -73,11 +75,12 @@ public class Product {
 
             PreparedStatement pstmt = connections.con.prepareStatement(sql);
             pstmt.setInt(1, id);
-            pstmt.executeUpdate();
-            success = true;
+            int count = pstmt.executeUpdate();
+            success = count > 0;
 
         }catch (Exception e) {
             System.err.println(e);
+            throw e;
         }finally {
             connections.closeConnection();
         }

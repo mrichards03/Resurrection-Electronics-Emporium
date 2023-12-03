@@ -7,6 +7,24 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF8"%>
 <%@ include file="header.jsp" %>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+<script>
+	function deleteProd(id) {
+		if (confirm("Are you sure you want to delete this product?")) {
+			window.location.href = "delete-Product?id=" + id;
+		}
+	}
+</script>
+<%
+
+	if (request.getAttribute("message") != null && request.getAttribute("success") != null) {
+		String message = request.getAttribute("message").toString();
+		String success = request.getAttribute("success").toString();
+%>
+<jsp:include page="toast.jsp">
+	<jsp:param name="message" value="<%=message%>" />
+	<jsp:param name="success" value="<%=success%>" />
+</jsp:include>
+<%	} %>
 
 <!DOCTYPE html>
 <html>
@@ -45,7 +63,9 @@
 			<th></th>
 			<th>Product Name</th>
 			<th>Price</th>
-			<th></th>
+			<% if(user != null && user.accessLevel == AccessLevel.Admin) { %>
+				<th></th>
+			<% } %>
 		</tr>
 
 	<%
@@ -62,8 +82,8 @@
 				<td><%=prod.priceStr%></td>
 				<% if(user != null && user.accessLevel == AccessLevel.Admin) { %>
 					<td>
-						<a href="delete-Product?id=<%=prod.id%>" class="btn btn-danger">
-							<i class="fa fa-trash-o fa-lg"></i></a>
+						<button onclick="deleteProd(<%=prod.id%>)" class="btn btn-danger">
+							<i class="fa fa-trash-o fa-lg"></i></button>
 					</td>
 				<% } %>
 			</tr>
