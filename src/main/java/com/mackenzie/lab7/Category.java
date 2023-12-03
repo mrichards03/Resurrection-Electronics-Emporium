@@ -32,4 +32,9 @@ public class Category {
         }
         return categories;
     }
+
+    public static Category getCategory(int categoryId) {
+        List<Category> categories = getCategories();
+        return categories.stream().filter(c -> c.id == categoryId).findFirst().orElse(null);
+    }
 }

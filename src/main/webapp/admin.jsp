@@ -9,11 +9,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Administrator Page</title>
+<title>Sales</title>
 </head>
 <body>
 
-    <h1>Order List</h1>
+    <h1>Sales</h1>
     <table class="table border-dark border-1 table-striped">
     <thead class="table-dark">
     <tr>

@@ -17,7 +17,7 @@ public class Order {
     public String custName;
     public String totalStr;
     public double total;
-    public ArrayList<Product> products;
+    public ArrayList<OrderProduct> products;
 
     public Order(int id, LocalDateTime date, int custId, String custName, String totalStr, double total) {
         this.id = id;
@@ -52,9 +52,18 @@ public class Order {
                 ResultSet prods = prodsQuery.executeQuery();
 
                 while (prods.next()) {
-                    order.products.add(new Product(prods.getInt("productId"),
-                            prods.getDouble("price"),
-                            prods.getInt("quantity"), null));
+                    OrderProduct op = new OrderProduct();
+                    op.product = new Product(
+                            prods.getInt("productId"),
+                            prods.getDouble("productPrice"),
+                            prods.getString("productName"),
+                            prods.getString("productDesc"),
+                            prods.getBinaryStream("productImage"),
+                            Category.getCategory(prods.getInt("categoryId")),
+                            Brand.getBrand(prods.getInt("brandId"))
+                    );
+                    op.quantity = prods.getInt("quantity");
+                    order.products.add(op);
                 }
 
                 orders.add(order);

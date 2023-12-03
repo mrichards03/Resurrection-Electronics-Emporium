@@ -1,6 +1,5 @@
 <%@ page import="java.util.List" %>
-<%@ page import="com.mackenzie.lab7.Product" %>
-<%@ page import="com.mackenzie.lab7.Order" %>
+<%@ page import="com.mackenzie.lab7.*" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF8"%>
 <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css">
 <!DOCTYPE html>
@@ -48,12 +47,12 @@
 					</tr>
 				</thead>
 				<%
-					for (Product p : o.products){
+					for (OrderProduct p : o.products){
 				%>
 				<tr>
-					<td><%=p.id%></td>
+					<td><%=p.product.id%></td>
 					<td><%=p.quantity%></td>
-					<td><%=p.priceStr%></td>
+					<td><%=p.product.priceStr%></td>
 				</tr>
 				<%
 					}

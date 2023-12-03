@@ -1,28 +1,29 @@
 package com.mackenzie.lab7;
 
 import java.io.InputStream;
-import java.sql.Blob;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.*;
 
 public class Product {
     public int id;
     public String name;
     public double price;
     public String priceStr;
-    public int quantity;
     public String desc;
     public InputStream image;
     public Category category;
     public Brand brand;
 
 
-    public Product(int id, double price, int quantity, String name){
+    public Product(int id, double price, String name, String desc, InputStream image, Category category, Brand brand){
         this.id = id;
         this.price = price;
-        this.priceStr = String.format("$%.2f", price);
-        this.quantity = quantity;
         this.name = name;
+        this.priceStr = String.format("$%.2f", price);
+        this.desc = desc;
+        this.image = image;
+        this.category = category;
+        this.brand = brand;
     }
 
     public Product(double price, String name, String desc, InputStream image, Category category, Brand brand){
@@ -85,5 +86,42 @@ public class Product {
             connections.closeConnection();
         }
         return success;
+    }
+
+    public static List<Product> getProducts(String search){
+        Connections con = new Connections();
+        List<Product> prods = new ArrayList<>();
+        try {
+            con.getConnection();
+
+            PreparedStatement prodsQuery;
+            boolean hasName = search != null && !search.isEmpty();
+            if (hasName) {
+                search = "%" + search + "%";
+                prodsQuery = con.con.prepareStatement("select * from product where productName like ? ");
+                prodsQuery.setString(1, search);
+            } else {
+                prodsQuery = con.con.prepareStatement("select * from product");
+            }
+            ResultSet rsprods = prodsQuery.executeQuery();
+
+            while (rsprods.next()) {
+                prods.add(new Product(
+                        rsprods.getInt("productId"),
+                        rsprods.getDouble("productPrice"),
+                        rsprods.getString("productName"),
+                        rsprods.getString("productDesc"),
+                        rsprods.getBinaryStream("productImage"),
+                        Category.getCategory(rsprods.getInt("categoryId")),
+                        Brand.getBrand(rsprods.getInt("brandId"))
+                ));
+
+            }
+        }catch (Exception e) {
+            System.err.println(e);
+        }finally {
+            con.closeConnection();
+        }
+        return prods;
     }
 }

@@ -32,4 +32,9 @@ public class Brand {
         }
         return brands;
     }
+
+    public static Brand getBrand(int brandId) {
+        List<Brand> brands = getBrands();
+        return brands.stream().filter(c -> c.id == brandId).findFirst().orElse(null);
+    }
 }
