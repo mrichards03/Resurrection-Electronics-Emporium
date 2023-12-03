@@ -95,9 +95,10 @@
                     <textarea class="form-control mb-2" id="desc" name="desc" style="max-height: 5rem;"><%= prod.desc %></textarea>
 
                     <!-- Price -->
-                    <label for="price">Price:</label>
-                    <input type="number" min="0" class="form-control mb-2" id="price" name="price" value="<%= prod.price %>" required>
-
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">$</span>
+                        <input type="number" class="form-control" aria-label="Price" value="<%=prod.price%>"/>
+                    </div>
                     <!-- Buttons -->
                     <% if (prod.id > -1) { %>
                     <div class="d-flex justify-content-between">

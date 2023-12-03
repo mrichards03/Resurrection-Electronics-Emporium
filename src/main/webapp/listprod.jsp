@@ -1,9 +1,5 @@
 <%@ page import="com.mackenzie.lab7.Product" %>
 <%@ page import="java.util.List" %>
-<%@ page import="com.mackenzie.lab7.Connections" %>
-<%@ page import="java.util.ArrayList" %>
-<%@ page import="java.sql.*" %>
-<%@ page import="java.text.NumberFormat" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF8"%>
 <%@ include file="header.jsp" %>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
@@ -37,12 +33,6 @@
 </head>
 <body>
 <div class="m-4">
-	<h1>Search for the products you want to buy:</h1>
-
-	<form method="get" action="listprod.jsp">
-	<input type="text" name="productName" size="50">
-	<input class="btn btn-secondary" type="submit" value="Submit"> <input class="btn btn-secondary" type="reset" value="Reset"> (Leave blank for all products)
-	</form>
 
 	<% // Get product name to search for
 		String name = request.getParameter("productName") == null ? "" : request.getParameter("productName");
@@ -76,7 +66,7 @@
 			<jsp:include page="productCard.jsp"/>
 		<%}%>
 	</div>
-
+<% if(prods.size() > itemsPerPage){%>
 	<nav aria-label="Page navigation">
 		<ul class="pagination">
 			<li class="page-item">
@@ -95,7 +85,9 @@
 
 		</ul>
 	</nav>
+<%}%>
 </div>
+
 <!--add product modal!-->
 <div class="modal fade" id="addProduct" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
 	<div class="modal-dialog">
