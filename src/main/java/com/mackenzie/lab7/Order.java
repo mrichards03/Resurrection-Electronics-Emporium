@@ -84,9 +84,9 @@ public class Order {
         return orders;
     }
 
-    public static List<Map.Entry<LocalDate, String>> getDailySales(){
-        List<Map.Entry<LocalDate, String>> groupedOrders = new ArrayList<>();
-        NumberFormat currFormat = NumberFormat.getCurrencyInstance();
+    public static List<Map.Entry<LocalDate, Double>> getDailySales(){
+        List<Map.Entry<LocalDate, Double>> groupedOrders = new ArrayList<>();
+
         try{
             List<Order> o = getOrders();
             groupedOrders = o.stream()
@@ -97,7 +97,7 @@ public class Order {
                     .stream()
                     .filter(entry -> entry.getValue() > 0) // Filter out empty totals
                     .sorted(Map.Entry.comparingByKey())
-                    .map(entry -> Map.entry(entry.getKey(), currFormat.format(entry.getValue())))
+                    .map(entry -> Map.entry(entry.getKey(), entry.getValue()))
                     .collect(Collectors.toList());
 
         }catch (Exception e){
