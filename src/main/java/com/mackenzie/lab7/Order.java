@@ -17,15 +17,17 @@ public class Order {
     public String custName;
     public String totalStr;
     public double total;
+    public boolean isShipped;
     public ArrayList<OrderProduct> products;
 
-    public Order(int id, LocalDateTime date, int custId, String custName, String totalStr, double total) {
+    public Order(int id, LocalDateTime date, int custId, String custName, String totalStr, double total, boolean isShipped) {
         this.id = id;
         this.date = date;
         this.custId = custId;
         this.custName = custName;
         this.totalStr = totalStr;
         this.total = total;
+        this.isShipped = isShipped;
         products = new ArrayList<>();
     }
     public static List<Order> getOrders(){
@@ -36,7 +38,9 @@ public class Order {
             con.getConnection();
 
             NumberFormat currFormat = NumberFormat.getCurrencyInstance();
-            PreparedStatement stmt = con.con.prepareStatement("SELECT * FROM ordersummary join users on ordersummary.userID = users.userId");
+            PreparedStatement stmt = con.con.prepareStatement("SELECT * FROM ordersummary " +
+                    "join users on ordersummary.userID = users.userId " +
+                    "left join shipment on ordersummary.orderId = shipment.orderId");
             ResultSet rst = stmt.executeQuery();
 
             while (rst.next()) {
@@ -45,7 +49,8 @@ public class Order {
                         rst.getTimestamp("orderDate").toLocalDateTime(),
                         rst.getInt("userId"),
                         rst.getString("firstname") + " " + rst.getString("lastname"),
-                        currFormat.format(total), total);
+                        currFormat.format(total), total,
+                        rst.getString("shipmentId") != null);
 
                 PreparedStatement prodsQuery = con.con.prepareStatement("select * from orderproduct op join product p on op.productId = p.productId where orderId = ?");
                 prodsQuery.setInt(1, order.id);

@@ -1,6 +1,7 @@
 package com.mackenzie.lab7;
 
 import java.io.InputStream;
+import java.io.Serializable;
 import java.sql.*;
 import java.util.*;
 
@@ -36,6 +37,7 @@ public class Product {
         this.brand = brand;
 
     }
+    public Product(){}
 
     public static boolean addProduct(Product product) throws SQLException {
         Connections connections = new Connections();
@@ -123,5 +125,38 @@ public class Product {
             con.closeConnection();
         }
         return prods;
+    }
+
+    public static boolean saveProduct(Product prod) throws SQLException {
+        Connections con = new Connections();
+        boolean success = false;
+        try {
+            con.getConnection();
+
+            PreparedStatement pstmt = con.con.prepareStatement("UPDATE product SET productName = ?, " +
+                    "productPrice = ?, productDesc = ?, categoryId = ?, brandId = ? WHERE productId = ?");
+            pstmt.setString(1, prod.name);
+            pstmt.setDouble(2, prod.price);
+            pstmt.setString(3, prod.desc);
+            pstmt.setInt(4, prod.category.id);
+            pstmt.setInt(5, prod.brand.id);
+            pstmt.setInt(6, prod.id);
+            int count = pstmt.executeUpdate();
+            success = count > 0;
+            if(prod.image != null){
+                pstmt = con.con.prepareStatement("UPDATE product SET productImage = ? WHERE productId = ?");
+                pstmt.setBlob(1, prod.image);
+                pstmt.setInt(2, prod.id);
+                count = pstmt.executeUpdate();
+                success = count > 0;
+            }
+
+        }catch (Exception e) {
+            System.err.println(e);
+            throw e;
+        }finally {
+            con.closeConnection();
+        }
+        return success;
     }
 }

@@ -77,8 +77,9 @@
 
 			con.con.setAutoCommit(false);
 
-			PreparedStatement newShipQuery = con.con.prepareStatement("INSERT INTO shipment (warehouseId, shipmentDate) VALUES (1,?)");
+			PreparedStatement newShipQuery = con.con.prepareStatement("INSERT INTO shipment (warehouseId, shipmentDate, orderId) VALUES (1,?, ?)");
 			newShipQuery.setDate(1, new java.sql.Date(new java.util.Date().getTime()));
+			newShipQuery.setString(2, orderId);
 			newShipQuery.executeUpdate();
 
 			int count = 0;

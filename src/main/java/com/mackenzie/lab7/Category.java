@@ -1,10 +1,11 @@
 package com.mackenzie.lab7;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.*;
 
-public class Category {
+public class Category{
     public int id;
     public String name;
 

@@ -54,24 +54,26 @@
 
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <div class="container-fluid">
-        <a class="navbar-brand" href="index.jsp">Home</a>
+        <a class="navbar-brand" href=<%=isAdmin ? "admin.jsp" : "listProd.jsp"%>>
+            <%=isAdmin ? "Home" : "Shop"%></a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbar">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <% if(isAdmin){ %>
                 <li class="nav-item">
-                    <a class="nav-link" href="listprod.jsp" aria-current="page">Shop</a>
+                    <a class="nav-link" href="listProd.jsp" aria-current="page">Products</a>
                 </li>
+                <% } %>
                 <li class="nav-item">
-                    <a class="nav-link" href="listorder.jsp" aria-current="page">Orders</a>
+                    <a class="nav-link" href="listorder.jsp" aria-current="page">
+                        <%=isAdmin ? "Orders":"My Orders"%>
+                    </a>
                 </li>
+                <% if(!isAdmin){ %>
                 <li class="nav-item">
                     <a class="nav-link" href="showcart.jsp" aria-current="page">Cart</a>
-                </li>
-                <% if(LoggedIn && user.accessLevel == AccessLevel.Admin){ %>
-                <li class="nav-item">
-                    <a class="nav-link" href="admin.jsp" aria-current="page">Sales</a>
                 </li>
                 <% } %>
             </ul>
@@ -104,6 +106,7 @@
     String custName = "";
     boolean LoggedIn = false;
     User user;
+    boolean isAdmin = false;
 
     public void onLoginChange(String username){
         if(username == null || username.isEmpty()){
@@ -116,6 +119,7 @@
             LoginLink = "logout.jsp";
             custName = user.firstName;
             LoggedIn = true;
+            isAdmin = user.accessLevel == AccessLevel.Admin;
         }
     }
 

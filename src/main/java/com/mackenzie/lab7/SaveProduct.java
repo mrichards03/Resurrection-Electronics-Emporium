@@ -12,15 +12,16 @@ import java.io.*;
 import java.sql.SQLException;
 import java.util.Optional;
 
-@WebServlet(name = "addProduct", urlPatterns = {"/add-Product"})
+@WebServlet(name = "saveProduct", urlPatterns = {"/save-Product"})
 @MultipartConfig(maxFileSize = 16177215)    // upload file's size up to 16MB
-public class AddProduct extends HttpServlet {
+public class SaveProduct extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request,
                           HttpServletResponse response) throws ServletException, IOException {
         boolean success = false;
         try {
+            int id = Integer.parseInt(request.getParameter("id"));
             String name = request.getParameter("name");
             double price = Double.parseDouble(request.getParameter("price"));
             String description = request.getParameter("desc");
@@ -39,23 +40,23 @@ public class AddProduct extends HttpServlet {
             Optional<Category> cat = Category.getCategories().stream().filter(f -> f.id == categoryId).findFirst();
             Optional<Brand> brand = Brand.getBrands().stream().filter(f -> f.id == brandId).findFirst();
 
-            Product prod = new Product(price, name, description, inputStream,
+            Product prod = new Product(id, price, name, description, inputStream,
                     cat.orElse(null),
                     brand.orElse(null));
 
-            success = Product.addProduct(prod);
+            success = Product.saveProduct(prod);
         } catch (SQLException e) {
             System.err.println(e);
         }finally {
             if(success){
-                request.setAttribute("message", "Product added successfully!");
+                request.setAttribute("message", "Product saved successfully!");
                 request.setAttribute("success", true);
             }else{
-                request.setAttribute("message", "Failed to add product!");
+                request.setAttribute("message", "Failed to save product!");
                 request.setAttribute("success", false);
             }
             // Forward to listProd.jsp
-            request.getRequestDispatcher("/listProd.jsp").forward(request, response);
+            request.getRequestDispatcher("listProd.jsp").forward(request, response);
         }
 
     }

@@ -8,10 +8,8 @@
 <%@ include file="header.jsp" %>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 <script>
-	function deleteProd(id) {
-		if (confirm("Are you sure you want to delete this product?")) {
-			window.location.href = "delete-Product?id=" + id;
-		}
+	function submit(){
+		document.getElementById('productForm-1').submit();
 	}
 </script>
 <%
@@ -61,44 +59,24 @@
 	</br>
 	<% if(name == null || name.isEmpty()) { %>
 		<h2>All Products</h2>
-	<% } %>
-
-	<% if(user != null && user.accessLevel == AccessLevel.Admin) { %>
-		<div class="d-flex justify-content-end">
-			<a href="newProduct.jsp" class="btn btn-primary mb-2">
+	<% }
+		if(isAdmin){%>
+			<button type="button" class="btn btn-primary mb-2 d-flex justify-content-end" data-bs-toggle="modal" data-bs-target="#addProduct">
 				Add Product
-			</a>
-		</div>
-
-	<% } %>
-
-	<div class="row row-cols-1 row-cols-md-5 g-4">
+			</button>
+	<%}%>
+	<div class="row row-cols-1 row-cols-md-<%=isAdmin? "4":"5"%> g-4">
 
 	<%
 		for(Product prod : prods.subList(startIndex, Math.min(endIndex, prods.size())))
 		{
+			request.setAttribute("prod", prod);
+			request.setAttribute("isAdmin", isAdmin);
 	%>
-		<div class="col">
-			<div class="card h-100">
-				<img src="displayImage.jsp?id=<%=prod.id%>" class="card-img-top" alt="">
-				<div class="card-body d-flex flex-column justify-content-end">
-					<h5 class="card-title"><%=prod.name%></h5>
-					<p class="card-text overflow-auto" style="max-height: 5rem;"><%=prod.desc%></p>
-					<p class="card-text"><%=prod.priceStr%></p>
-					<% if(user != null && user.accessLevel == AccessLevel.Admin) { %>
-						<button class="btn btn-danger" onclick="deleteProd(<%=prod.id%>)">Delete</button>
-					<% }else{ %>
-						<a href="addcart.jsp?id=<%=prod.id%>&name=<%=prod.name%>&price=<%=prod.price%>" class="btn btn-success">Add to Cart</a>
-					<% } %>
-				</div>
-			</div>
-		</div>
-
-
-	<%
-		}
-	%>
+			<jsp:include page="productCard.jsp"/>
+		<%}%>
 	</div>
+
 	<nav aria-label="Page navigation">
 		<ul class="pagination">
 			<li class="page-item">
@@ -117,6 +95,28 @@
 
 		</ul>
 	</nav>
+</div>
+<!--add product modal!-->
+<div class="modal fade" id="addProduct" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h1 class="modal-title fs-5" id="staticBackdropLabel">Modal title</h1>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<%
+				request.setAttribute("prod", "");
+				request.setAttribute("isAdmin", isAdmin);
+				%>
+				<jsp:include page="productCard.jsp"/>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-success mb-2" data-bs-dismiss="modal" onclick="submit()">Add</button>
+				<button class="btn btn-secondary mb-2" data-bs-dismiss="modal">Cancel</button>
+			</div>
+		</div>
+	</div>
 </div>
 </body>
 </html>
