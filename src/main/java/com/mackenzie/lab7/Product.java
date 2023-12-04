@@ -159,4 +159,23 @@ public class Product {
         }
         return success;
     }
+
+    public int getInvQuant(){
+        Connections con = new Connections();
+        int quantity = 0;
+        try{
+            con.getConnection();
+            PreparedStatement stmt = con.con.prepareStatement("select quantity from productinventory where productId = ?");
+            stmt.setInt(1, id);
+            ResultSet rst = stmt.executeQuery();
+            rst.next();
+            quantity = rst.getInt("quantity");
+        }catch (Exception e){
+            System.err.println("SQLException: " + e);
+        }
+        finally {
+            con.closeConnection();
+        }
+        return quantity;
+    }
 }

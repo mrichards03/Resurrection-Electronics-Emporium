@@ -20,12 +20,13 @@ public class Order {
     public boolean isShipped;
     public ArrayList<OrderProduct> products;
 
-    public Order(int id, LocalDateTime date, int custId, String custName, String totalStr, double total, boolean isShipped) {
+    public Order(int id, LocalDateTime date, int custId, String custName, double total, boolean isShipped) {
+        NumberFormat currFormat = NumberFormat.getCurrencyInstance();
         this.id = id;
         this.date = date;
         this.custId = custId;
         this.custName = custName;
-        this.totalStr = totalStr;
+        this.totalStr = currFormat.format(total);
         this.total = total;
         this.isShipped = isShipped;
         products = new ArrayList<>();
@@ -49,27 +50,10 @@ public class Order {
                         rst.getTimestamp("orderDate").toLocalDateTime(),
                         rst.getInt("userId"),
                         rst.getString("firstname") + " " + rst.getString("lastname"),
-                        currFormat.format(total), total,
+                        total,
                         rst.getString("shipmentId") != null);
 
-                PreparedStatement prodsQuery = con.con.prepareStatement("select * from orderproduct op join product p on op.productId = p.productId where orderId = ?");
-                prodsQuery.setInt(1, order.id);
-                ResultSet prods = prodsQuery.executeQuery();
-
-                while (prods.next()) {
-                    OrderProduct op = new OrderProduct();
-                    op.product = new Product(
-                            prods.getInt("productId"),
-                            prods.getDouble("productPrice"),
-                            prods.getString("productName"),
-                            prods.getString("productDesc"),
-                            prods.getBinaryStream("productImage"),
-                            Category.getCategory(prods.getInt("categoryId")),
-                            Brand.getBrand(prods.getInt("brandId"))
-                    );
-                    op.quantity = prods.getInt("quantity");
-                    order.products.add(op);
-                }
+                        order.products = (ArrayList<OrderProduct>) OrderProduct.getOrderProducts(order.id);
 
                 orders.add(order);
             }
@@ -115,15 +99,15 @@ public class Order {
         return finalList;
     }
 
-    public static int readyToShip(){
-        int count = 0;
+    public static List<Order> readyToShip(){
         Connections con = new Connections();
+        List<Order> orders = new ArrayList<>();
         try{
             con.getConnection();
-            //count all orders that have sufficient inventory and haven't been shipped
+            //get all orders that have sufficient inventory and haven't been shipped
             PreparedStatement stmt = con.con.prepareStatement("""
-                    SELECT COUNT(*) AS count
-                    FROM ordersummary os
+                    SELECT *
+                    FROM ordersummary os join users u on os.userId = u.userId
                     WHERE os.orderId IN (
                             SELECT op.orderId
                             FROM orderproduct op
@@ -136,8 +120,15 @@ public class Order {
             )
             """);
             ResultSet rst = stmt.executeQuery();
-            if(rst.next()){
-                count = rst.getInt("count");
+            while(rst.next()){
+                Order order = new Order(rst.getInt("orderId"),
+                        rst.getTimestamp("orderDate").toLocalDateTime(),
+                        rst.getInt("userId"),
+                        rst.getString("firstname") + " " + rst.getString("lastname"),
+                        rst.getDouble("totalAmount"),
+                        false);
+                order.products = (ArrayList<OrderProduct>) OrderProduct.getOrderProducts(order.id);
+                orders.add(order);
             }
         }catch (Exception e){
             System.err.println("SQLException: " + e);
@@ -145,18 +136,19 @@ public class Order {
         finally {
             con.closeConnection();
         }
-        return count;
+        return orders;
     }
 
-    public static int cantShip(){
-        int count = 0;
+    public static List<Order> cantShip(){
+        List<Order> orders = new ArrayList<>();
         Connections con = new Connections();
         try{
             con.getConnection();
             //count all orders that don't have sufficient inventory and haven't been shipped
             PreparedStatement stmt = con.con.prepareStatement("""
-                            SELECT COUNT(DISTINCT os.orderId) AS count
-                            FROM ordersummary os
+                            
+                    select * from (SELECT os.orderId
+                            FROM ordersummary os join users u on os.userId = u.userId
                             WHERE EXISTS (
                                 SELECT 1
                                 FROM orderproduct op
@@ -168,10 +160,18 @@ public class Order {
                                 FROM shipment
                                 WHERE shipment.orderId = os.orderId
                             )
+                            group by os.orderId) o join ordersummary os on o.orderId = os.orderId join users u on os.userId = u.userId;
                             """);
             ResultSet rst = stmt.executeQuery();
-            if(rst.next()){
-                count = rst.getInt("count");
+            while(rst.next()){
+                Order order = new Order(rst.getInt("orderId"),
+                        rst.getTimestamp("orderDate").toLocalDateTime(),
+                        rst.getInt("userId"),
+                        rst.getString("firstname") + " " + rst.getString("lastname"),
+                        rst.getDouble("totalAmount"),
+                        false);
+                order.products = (ArrayList<OrderProduct>) OrderProduct.getOrderProducts(order.id);
+                orders.add(order);
             }
         }catch (Exception e){
             System.err.println("SQLException: " + e);
@@ -179,7 +179,7 @@ public class Order {
         finally {
             con.closeConnection();
         }
-        return count;
+        return orders;
     }
 
     public static int shipped(){
@@ -189,8 +189,8 @@ public class Order {
             con.getConnection();
             //count all orders that have been shipped
             PreparedStatement stmt = con.con.prepareStatement("""
-                            select count(*) count from orderproduct 
-                            join shipment on orderproduct.orderId = shipment.orderId
+                            select count(*) count from ordersummary 
+                            join shipment on ordersummary.orderId = shipment.orderId
                             """);
             ResultSet rst = stmt.executeQuery();
             if(rst.next()){

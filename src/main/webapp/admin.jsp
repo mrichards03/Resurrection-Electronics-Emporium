@@ -43,25 +43,31 @@
 %>
 <div class="m-4">
     <div class="row">
-        <div class="card col m-2">
+
+        <div class="card position-relative col m-2" style="transition: transform 0.3s ease-in-out; cursor:pointer">
+            <i class="fa-solid fa-chevron-right fa-beat position-absolute top-0 end-0 p-2" style="color: #495057;"></i>
             <div class="card-body">
                 <h5 class="card-title">Orders ready to ship</h5>
-                <p class="card-text"><%=Order.readyToShip()%></p>
+                <p class="card-text"><%= Order.readyToShip().size() %></p>
+                <a href="ship.jsp" class="stretched-link"></a>
             </div>
         </div>
+
+
         <div class="card col m-2">
             <div class="card-body">
                 <h5 class="card-title">Orders waiting for inventory</h5>
-                <p class="card-text"><%=Order.cantShip()%></p>
+                <p class="card-text"><%=Order.cantShip().size()%></p>
             </div>
         </div>
         <div class="card col m-2">
             <div class="card-body">
                 <h5 class="card-title">Shipped Orders</h5>
-                <%int shipped = Order.shipped();%>
-                <p class="card-text"><%=shipped%></p>
+                <%int shipped = Order.shipped();
+                   String percent = String.format("%.2f", ((float)shipped/(float)totalOrders) * 100);%>
+                <p class="card-text"><%=shipped%>/<%=totalOrders%></p>
                 <div class="progress" role="progressbar" aria-valuenow="<%=shipped%>>" aria-valuemin="0" aria-valuemax="<%=totalOrders%>>">
-                    <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: 25%"><%=((float)shipped/(float)totalOrders) * 100%>%</div>
+                    <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: <%=percent%>%"><%=percent%>%</div>
                 </div>
             </div>
         </div>

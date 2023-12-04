@@ -1,5 +1,7 @@
 <%@ page import="com.mackenzie.lab7.User" %>
 <%@ page import="com.mackenzie.lab7.AccessLevel" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="java.util.HashMap" %>
 <%
     String username = session.getAttribute("authenticatedUser") == null ?
             null : session.getAttribute("authenticatedUser").toString();
@@ -8,6 +10,8 @@
 
 <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css">
 <script type="text/javascript" src="bootstrap/js/bootstrap.bundle.js"></script>
+<script src="https://kit.fontawesome.com/032953b54f.js" crossorigin="anonymous"></script>
+
 <!--  keeps track of history without duplicates so login can go to previous page -->
 <script>
     var url = window.location.pathname;
@@ -60,7 +64,7 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbar">
-            <div class="col">
+            <div class="col me-4">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <% if(isAdmin){ %>
                     <li class="nav-item">
@@ -74,19 +78,24 @@
                     </li>
                     <% if(!isAdmin){ %>
                     <li class="nav-item">
-                        <a class="nav-link" href="showcart.jsp" aria-current="page">Cart</a>
+                        <a class="nav-link" href="showcart.jsp" aria-current="page">
+                            <%
+                                HashMap<String, ArrayList<Object>> productList = (HashMap<String, ArrayList<Object>>) session.getAttribute("productList");
+                                boolean empty = productList == null || productList.isEmpty();
+                            %>
+                            Cart
+                            <i class="fa-solid fa-cart-shopping <%=empty ? "":"fa-beat"%>" style="color: #ffffff;"></i>
+                        </a>
                     </li>
                     <% } %>
                 </ul>
             </div>
-            <div class="col-10 justify-content-between">
+            <div class="col-8 justify-content-between">
                 <form class="d-flex m-auto" role="search" action="listprod.jsp">
                     <input class="form-control me-2" type="search" placeholder="Search" name="productName" aria-label="Search">
 
                     <button class="btn btn-outline-success btn-success" type="submit">
-                        <svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 512 512">
-                            <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/>
-                        </svg>
+                        <i class="fa-solid fa-magnifying-glass" style="color: #000000"></i>
                     </button>
                 </form>
             </div>

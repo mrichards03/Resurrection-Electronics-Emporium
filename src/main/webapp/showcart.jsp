@@ -17,7 +17,6 @@
 	});
 
 </script>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 <head>
 <title>Your Shopping Cart</title>
 </head>
@@ -33,9 +32,9 @@ if(prodID != null && !prodID.isEmpty()){
 }
 
 if (productList == null || productList.isEmpty())
-{
-	out.println("<H1>Your shopping cart is empty!</H1>");
-}
+{%>
+	<h1>Your shopping cart is empty!</h1>
+<%}
 else
 {
 	NumberFormat currFormat = NumberFormat.getCurrencyInstance();
@@ -99,7 +98,7 @@ else
 		<td><%=currFormat.format(pr*qty)%></td>
 		<td>&nbsp;&nbsp;&nbsp;&nbsp;
 			<a href="showcart.jsp?delete=<%=entry.getKey()%>" class="btn btn-danger">
-				<i class="fa fa-trash-o"></i>
+				<i class="fa-solid fa-trash"></i>
 			</a>
 		</td>
 	</tr>
