@@ -49,14 +49,14 @@ public class SaveProduct extends HttpServlet {
             System.err.println(e);
         }finally {
             if(success){
-                request.setAttribute("message", "Product saved successfully!");
-                request.setAttribute("success", true);
+                request.getSession().setAttribute("message", "Product saved successfully!");
+                request.getSession().setAttribute("success", true);
             }else{
-                request.setAttribute("message", "Failed to save product!");
-                request.setAttribute("success", false);
+                request.getSession().setAttribute("message", "Failed to saved product!");
+                request.getSession().setAttribute("success", false);
             }
             // Forward to listProd.jsp
-            request.getRequestDispatcher("listProd.jsp").forward(request, response);
+            response.sendRedirect("listProd.jsp");
         }
 
     }

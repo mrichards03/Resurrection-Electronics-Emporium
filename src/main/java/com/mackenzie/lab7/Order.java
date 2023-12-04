@@ -85,25 +85,123 @@ public class Order {
     }
 
     public static List<Map.Entry<LocalDate, Double>> getDailySales(){
-        List<Map.Entry<LocalDate, Double>> groupedOrders = new ArrayList<>();
+        List<Map.Entry<LocalDate, Double>> finalList = new ArrayList<>();
 
         try{
             List<Order> o = getOrders();
-            groupedOrders = o.stream()
+            LocalDate startDate = o.stream().map(order -> order.date.toLocalDate()).min(LocalDate::compareTo).get();
+            LocalDate endDate = LocalDate.now();
+
+            Map<LocalDate, Double> groupedOrders = o.stream()
                     .collect(Collectors.groupingBy(
-                            order -> order.date.toLocalDate(), //
-                            Collectors.summingDouble(order -> order.total) // Sum total for each group
-                    )).entrySet()
-                    .stream()
-                    .filter(entry -> entry.getValue() > 0) // Filter out empty totals
+                            order -> order.date.toLocalDate(),
+                            Collectors.summingDouble(order -> order.total)
+                    ));
+
+            Map<LocalDate, Double> completeOrders = startDate.datesUntil(endDate.plusDays(1))
+                    .collect(Collectors.toMap(
+                            date -> date,
+                            date -> groupedOrders.getOrDefault(date, 0.0)
+                    ));
+
+            finalList = completeOrders.entrySet().stream()
                     .sorted(Map.Entry.comparingByKey())
-                    .map(entry -> Map.entry(entry.getKey(), entry.getValue()))
                     .collect(Collectors.toList());
 
         }catch (Exception e){
             System.err.println(e);
         }
 
-        return groupedOrders;
+        return finalList;
+    }
+
+    public static int readyToShip(){
+        int count = 0;
+        Connections con = new Connections();
+        try{
+            con.getConnection();
+            //count all orders that have sufficient inventory and haven't been shipped
+            PreparedStatement stmt = con.con.prepareStatement("""
+                    SELECT COUNT(*) AS count
+                    FROM ordersummary os
+                    WHERE os.orderId IN (
+                            SELECT op.orderId
+                            FROM orderproduct op
+                            LEFT JOIN productinventory prodInv ON op.productId = prodInv.productId
+                            GROUP BY op.orderId
+                            HAVING SUM(CASE WHEN op.quantity <= prodInv.quantity THEN 1 ELSE 0 END) = COUNT(*)
+            )
+            AND os.orderId NOT IN (
+                    SELECT orderId FROM shipment
+            )
+            """);
+            ResultSet rst = stmt.executeQuery();
+            if(rst.next()){
+                count = rst.getInt("count");
+            }
+        }catch (Exception e){
+            System.err.println("SQLException: " + e);
+        }
+        finally {
+            con.closeConnection();
+        }
+        return count;
+    }
+
+    public static int cantShip(){
+        int count = 0;
+        Connections con = new Connections();
+        try{
+            con.getConnection();
+            //count all orders that don't have sufficient inventory and haven't been shipped
+            PreparedStatement stmt = con.con.prepareStatement("""
+                            SELECT COUNT(DISTINCT os.orderId) AS count
+                            FROM ordersummary os
+                            WHERE EXISTS (
+                                SELECT 1
+                                FROM orderproduct op
+                                         JOIN productinventory prodInv ON op.productId = prodInv.productId
+                                WHERE op.orderId = os.orderId AND op.quantity > prodInv.quantity
+                            )
+                              AND NOT EXISTS (
+                                SELECT 1
+                                FROM shipment
+                                WHERE shipment.orderId = os.orderId
+                            )
+                            """);
+            ResultSet rst = stmt.executeQuery();
+            if(rst.next()){
+                count = rst.getInt("count");
+            }
+        }catch (Exception e){
+            System.err.println("SQLException: " + e);
+        }
+        finally {
+            con.closeConnection();
+        }
+        return count;
+    }
+
+    public static int shipped(){
+        int count = 0;
+        Connections con = new Connections();
+        try{
+            con.getConnection();
+            //count all orders that have been shipped
+            PreparedStatement stmt = con.con.prepareStatement("""
+                            select count(*) count from orderproduct 
+                            join shipment on orderproduct.orderId = shipment.orderId
+                            """);
+            ResultSet rst = stmt.executeQuery();
+            if(rst.next()){
+                count = rst.getInt("count");
+            }
+        }catch (Exception e){
+            System.err.println("SQLException: " + e);
+        }
+        finally {
+            con.closeConnection();
+        }
+        return count;
     }
 }

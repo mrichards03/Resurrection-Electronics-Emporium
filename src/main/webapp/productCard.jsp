@@ -51,6 +51,12 @@
     if(isAdmin){%>
         <div class="col">
             <form id="productForm<%=prod.id%>" action="<%=prod.id < 0 ? "add-Product":"save-Product"%>" method="post" enctype="multipart/form-data" class="card h-100">
+                <% if (prod.id > -1) { %>
+                    <button type="button" class="btn btn-danger card-header" onclick="deleteProd(<%=prod.id%>)">
+                        <i class="fa fa-trash"></i>
+                    </button>
+                <% } %>
+
                 <!-- Hidden input to store the product ID -->
                 <input type="hidden" name="id" value="<%= prod.id %>" />
 
@@ -97,16 +103,14 @@
                     <!-- Price -->
                     <div class="input-group mb-3">
                         <span class="input-group-text">$</span>
-                        <input type="number" class="form-control" aria-label="Price" value="<%=prod.price%>"/>
+                        <input type="number" class="form-control" aria-label="Price" name="price" value="<%=prod.price%>"/>
                     </div>
                     <!-- Buttons -->
                     <% if (prod.id > -1) { %>
-                    <div class="d-flex justify-content-between">
-                        <button type="submit" class="btn btn-primary mb-2">Save</button>
-                        <button type="reset" class="btn btn-secondary mb-2">Cancel</button>
-                        <button type="button" class="btn btn-danger mb-2" onclick="deleteProd(<%=prod.id%>)">
-                            <i class="fa fa-trash"></i>
-                        </button>
+                    <div class="row">
+                        <button type="submit" class="btn btn-success m-2 col-5">Save</button>
+                        <div class="col d-inline"></div>
+                        <button type="reset" class="btn btn-secondary m-2 col-5">Cancel</button>
                     </div>
                     <% }%>
                 </div>

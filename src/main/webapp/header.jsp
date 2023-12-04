@@ -52,7 +52,7 @@
 <!DOCTYPE html>
 <html  data-bs-theme="dark">
 
-<nav class="navbar navbar-expand-lg bg-body-tertiary">
+<nav class="navbar navbar-expand-lg bg-body-tertiary z-3">
     <div class="container-fluid">
         <a class="navbar-brand" href=<%=isAdmin ? "admin.jsp" : "listProd.jsp"%>>
             <%=isAdmin ? "Home" : "Shop"%></a>
@@ -92,8 +92,8 @@
             </div>
             <div class="d-flex justify-content-end col">
                 <% if(LoggedIn){ %>
-                <div class="dropdown mx-2">
-                    <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <div class="dropdown mx-2 z-3">
+                    <button class="btn btn-primary dropdown-toggle z-3" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Welcome <%=custName%>
                     </button>
                     <ul class="dropdown-menu">
@@ -126,6 +126,8 @@
             LoginMsg = "Login";
             LoginLink = "login.jsp";
             LoggedIn = false;
+            isAdmin = false;
+            user = null;
         }else{
             user = User.getUserInfo(username);
             LoginMsg = "Logout";

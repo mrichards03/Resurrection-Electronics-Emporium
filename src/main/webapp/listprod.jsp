@@ -16,15 +16,17 @@
 	}
 
 
-	if (request.getAttribute("message") != null && request.getAttribute("success") != null) {
-		String message = request.getAttribute("message").toString();
-		String success = request.getAttribute("success").toString();
+	if (session.getAttribute("message") != null && session.getAttribute("success") != null) {
+		String message = session.getAttribute("message").toString();
+		String success = session.getAttribute("success").toString();
+		session.removeAttribute("message");
+		session.removeAttribute("success");
 %>
 <jsp:include page="toast.jsp">
 	<jsp:param name="message" value="<%=message%>" />
 	<jsp:param name="success" value="<%=success%>" />
 </jsp:include>
-<%	} %>
+<%}%>
 
 <!DOCTYPE html>
 <html>

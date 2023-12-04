@@ -23,14 +23,14 @@ public class DeleteProduct extends HttpServlet {
             System.err.println(e);
         }finally {
             if(success){
-                request.setAttribute("message", "Product deleted successfully!");
-                request.setAttribute("success", true);
+                request.getSession().setAttribute("message", "Product deleted successfully!");
+                request.getSession().setAttribute("success", true);
             }else{
-                request.setAttribute("message", "Failed to delete product!");
-                request.setAttribute("success", false);
+                request.getSession().setAttribute("message", "Failed to deleted product!");
+                request.getSession().setAttribute("success", false);
             }
             // Forward to listProd.jsp
-            request.getRequestDispatcher("/listProd.jsp").forward(request, response);
+            response.sendRedirect("listProd.jsp");
         }
 
     }

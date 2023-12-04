@@ -1,9 +1,3 @@
-<%@ page import="java.time.LocalDateTime" %>
-<!--
-Created with the help of https://chat.openai.com/share/3947b715-a73f-431c-99e7-bd919c19c3bf
-!-->
-
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
   String message = request.getParameter("message");
   boolean success = Boolean.parseBoolean(request.getParameter("success"));
@@ -11,8 +5,6 @@ Created with the help of https://chat.openai.com/share/3947b715-a73f-431c-99e7-b
 <!DOCTYPE html>
 <html>
 <head>
-  <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css">
-  <script type="text/javascript" src="bootstrap/js/bootstrap.bundle.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', (event) => {
       var toastElList = [].slice.call(document.querySelectorAll('.toast'))
