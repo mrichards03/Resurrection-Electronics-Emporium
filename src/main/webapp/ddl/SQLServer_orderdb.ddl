@@ -25,22 +25,34 @@ CREATE TABLE users (
     lastName            VARCHAR(40),
     email               VARCHAR(50),
     phonenum            VARCHAR(20),
-    address             VARCHAR(50),
-    city                VARCHAR(40),
-    state               VARCHAR(20),
-    postalCode          VARCHAR(20),
-    country             VARCHAR(40),
     userName            VARCHAR(20),
     password            VARCHAR(30),
     AccessLevel         INT,
     PRIMARY KEY (userId)
 );
 
+CREATE TABLE address(
+    addressId           INT IDENTITY,
+    firstName           VARCHAR(40),
+    lastName            VARCHAR(40),
+    address             VARCHAR(50),
+    city                VARCHAR(40),
+    state               VARCHAR(20),
+    postalCode          VARCHAR(20),
+    country             VARCHAR(40),
+    customerId          INT,
+    PRIMARY KEY (addressId),
+    FOREIGN KEY (customerId) REFERENCES users(userId)
+        ON UPDATE CASCADE ON DELETE CASCADE
+);
+
 CREATE TABLE paymentmethod (
     paymentMethodId     INT IDENTITY,
+    nameOnCard          VARCHAR(80),
     paymentType         VARCHAR(20),
     paymentNumber       VARCHAR(30),
     paymentExpiryDate   DATE,
+    securityCode        CHAR(3),
     customerId          INT,
     PRIMARY KEY (paymentMethodId),
     FOREIGN KEY (customerId) REFERENCES users(userId)
@@ -51,15 +63,13 @@ CREATE TABLE ordersummary (
     orderId             INT IDENTITY,
     orderDate           DATETIME,
     totalAmount         DECIMAL(10,2),
-    shiptoAddress       VARCHAR(50),
-    shiptoCity          VARCHAR(40),
-    shiptoState         VARCHAR(20),
-    shiptoPostalCode    VARCHAR(20),
-    shiptoCountry       VARCHAR(40),
+    shipToAddressId     INT,
     userId              INT,
     PRIMARY KEY (orderId),
     FOREIGN KEY (userId) REFERENCES users(userId)
-        ON UPDATE CASCADE ON DELETE CASCADE 
+        ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (shipToAddressId) REFERENCES address(addressId)
+        ON UPDATE CASCADE ON DELETE SET NULL
 );
 
 CREATE TABLE category (
@@ -242,11 +252,35 @@ UPDATE productInventory SET quantity = 1 WHERE productId = 27;
 UPDATE productInventory SET quantity = 0 WHERE productId = 28;
 UPDATE productInventory SET quantity = 2 WHERE productId = 29;
 
-INSERT INTO users (firstName, lastName, email, phonenum, address, city, state, postalCode, country, userName, password, AccessLevel) VALUES ('Arnold', 'Anderson', 'a.anderson@gmail.com', '204-111-2222', '103 AnyWhere Street', 'Winnipeg', 'MB', 'R3X 45T', 'Canada', 'arnold' , '304Arnold!', 0);
-INSERT INTO users (firstName, lastName, email, phonenum, address, city, state, postalCode, country, userName, password, AccessLevel) VALUES ('Bobby', 'Brown', 'bobby.brown@hotmail.ca', '572-342-8911', '222 Bush Avenue', 'Boston', 'MA', '22222', 'United States', 'bobby' , '304Bobby!', 1);
-INSERT INTO users (firstName, lastName, email, phonenum, address, city, state, postalCode, country, userName, password, AccessLevel) VALUES ('Candace', 'Cole', 'cole@charity.org', '333-444-5555', '333 Central Crescent', 'Chicago', 'IL', '33333', 'United States', 'candace' , '304Candace!', 1);
-INSERT INTO users (firstName, lastName, email, phonenum, address, city, state, postalCode, country, userName, password, AccessLevel) VALUES ('Darren', 'Doe', 'oe@doe.com', '250-807-2222', '444 Dover Lane', 'Kelowna', 'BC', 'V1V 2X9', 'Canada', 'darren' , '304Darren!', 1);
-INSERT INTO users (firstName, lastName, email, phonenum, address, city, state, postalCode, country, userName, password, AccessLevel) VALUES ('Elizabeth', 'Elliott', 'engel@uiowa.edu', '555-666-7777', '555 Everwood Street', 'Iowa City', 'IA', '52241', 'United States', 'beth' , '304Beth!', 1);
+-- Insert into users and address for Arnold Anderson
+INSERT INTO users (firstName, lastName, email, phonenum, userName, password, AccessLevel)
+VALUES ('Arnold', 'Anderson', 'a.anderson@gmail.com', '204-111-2222', 'arnold' , '304Arnold!', 0);
+INSERT INTO address (firstName, lastName, address, city, state, postalCode, country, customerId)
+VALUES ('Arnold', 'Anderson', '103 AnyWhere Street', 'Winnipeg', 'MB', 'R3X 45T', 'Canada', 1);
+
+-- Insert into users and address for Bobby Brown
+INSERT INTO users (firstName, lastName, email, phonenum, userName, password, AccessLevel)
+VALUES ('Bobby', 'Brown', 'bobby.brown@hotmail.ca', '572-342-8911', 'bobby' , '304Bobby!', 1);
+INSERT INTO address (firstName, lastName, address, city, state, postalCode, country, customerId)
+VALUES ('Bobby', 'Brown', '222 Bush Avenue', 'Boston', 'MA', '22222', 'United States', 2);
+
+-- Insert into users and address for Candace Cole
+INSERT INTO users (firstName, lastName, email, phonenum, userName, password, AccessLevel)
+VALUES ('Candace', 'Cole', 'cole@charity.org', '333-444-5555', 'candace' , '304Candace!', 1);
+INSERT INTO address (firstName, lastName, address, city, state, postalCode, country, customerId)
+VALUES ('Candace', 'Cole', '333 Central Crescent', 'Chicago', 'IL', '33333', 'United States', 3);
+
+-- Insert into users and address for Darren Doe
+INSERT INTO users (firstName, lastName, email, phonenum, userName, password, AccessLevel)
+VALUES ('Darren', 'Doe', 'doe@doe.com', '250-807-2222', 'darren' , '304Darren!', 1);
+INSERT INTO address (firstName, lastName, address, city, state, postalCode, country, customerId)
+VALUES ('Darren', 'Doe', '444 Dover Lane', 'Kelowna', 'BC', 'V1V 2X9', 'Canada', 4);
+
+-- Insert into users and address for Elizabeth Elliott
+INSERT INTO users (firstName, lastName, email, phonenum, userName, password, AccessLevel)
+VALUES ('Elizabeth', 'Elliott', 'engel@uiowa.edu', '555-666-7777', 'beth' , '304Beth!', 1);
+INSERT INTO address (firstName, lastName, address, city, state, postalCode, country, customerId)
+VALUES ('Elizabeth', 'Elliott', '555 Everwood Street', 'Iowa City', 'IA', '52241', 'United States', 5);
 
 -- Order 1 can be shipped as have enough inventory
 DECLARE @orderId int

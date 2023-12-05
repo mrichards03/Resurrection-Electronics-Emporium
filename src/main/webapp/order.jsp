@@ -22,32 +22,32 @@ Connections con = new Connections();
         {
                 con.getConnection();
 
-                String custId = request.getParameter("customerId");
-                boolean hasCustId = custId != null && !custId.isEmpty() && !custId.equals("-1");
+                String addressNum = request.getParameter("addressNum");
+                String paymentNum = request.getParameter("paymentNum");
                 PreparedStatement custQuery;
                 ResultSet custs;
                 int intCustId;
                 String custName;
                 NumberFormat currFormat = NumberFormat.getCurrencyInstance();
 
-                if(hasCustId && productList != null && !productList.isEmpty()){
-                        intCustId = Integer.parseInt(custId);
+                if(productList != null && !productList.isEmpty()){
+                        intCustId = user.id;
                         custQuery = con.con.prepareStatement("Select * from users where userId = ?");
                         custQuery.setInt(1, intCustId);
                         custs = custQuery.executeQuery();
                         if(!custs.next()){throw new Exception("No Customers matching that ID");}
                         custName = custs.getString("firstname") + " " + custs.getString("lastname");
-                }else if(!hasCustId){
-                        throw new Exception("No ID entered");
                 }else{
                         throw new Exception("No products in cart.");
                 }
 
                 Calendar cal = Calendar.getInstance();
-                PreparedStatement pstmt = con.con.prepareStatement("insert into ordersummary (orderdate, totalAmount, userId) values(?, 00.00, ?);", Statement.RETURN_GENERATED_KEYS);
+                PreparedStatement pstmt = con.con.prepareStatement("insert into ordersummary (orderdate, totalAmount, userId, shipToAddressId, paymentId) values(?, 00.00, ?, ?, ?);", Statement.RETURN_GENERATED_KEYS);
 
                 pstmt.setTimestamp(1, new java.sql.Timestamp(cal.getTimeInMillis()));
                 pstmt.setInt(2, intCustId);
+                pstmt.setInt(3, Integer.parseInt(addressNum));
+                pstmt.setInt(4, Integer.parseInt(paymentNum));
                 pstmt.execute();
                 ResultSet keys = pstmt.getGeneratedKeys();
                 keys.next();

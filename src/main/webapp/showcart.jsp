@@ -4,7 +4,7 @@
 <%@ page import="java.text.NumberFormat" %>
 <%@ page import="java.util.Map" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF8"%>
-<jsp:include page="header.jsp" />
+<%@ include file="header.jsp" %>
 
 <!DOCTYPE html>
 <html>
@@ -23,6 +23,9 @@
 <body>
 
 <%
+	if(isAdmin){
+		response.sendRedirect("admin.jsp");
+	}
 // Get the current list of products
 @SuppressWarnings({"unchecked"})
 HashMap<String, ArrayList<Object>> productList = (HashMap<String, ArrayList<Object>>) session.getAttribute("productList");
