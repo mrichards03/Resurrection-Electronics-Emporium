@@ -55,7 +55,8 @@ public class User {
         this.accessLevel = accessLevel;
     }
 
-    public static void updateUser(User user){
+    public static boolean updateUser(User user) throws SQLException {
+        boolean success = false;
         Connections connections = new Connections();
         try{
             connections.getConnection();
@@ -68,14 +69,16 @@ public class User {
             ps.setString(4, user.phone);
             ps.setString(5, user.userName);
             ps.setInt(6, user.id);
-            ps.executeUpdate();
+            success = ps.executeUpdate() > 0;
 
         }catch(SQLException ex){
             System.err.println(ex);
+            throw ex;
         }
         finally {
             connections.closeConnection();
         }
+        return success;
     }
 
     public ArrayList<Address> getAddresses() {

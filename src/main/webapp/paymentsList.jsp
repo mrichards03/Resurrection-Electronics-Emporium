@@ -3,10 +3,17 @@
 <%@ page import="java.time.LocalDate" %>
 
 <% List<PaymentMethod> payments = (List<PaymentMethod>) request.getAttribute("payments");
-    for (PaymentMethod pm : payments) {
+if(payments == null){
+    int id = Integer.parseInt(request.getParameter("id"));
+    payments = PaymentMethod.getPaymentMethods(id);
+}
+    PaymentMethod firstValid = payments.stream().filter(f -> f.expirationDate.isAfter(LocalDate.now()))
+            .findFirst().orElse(null);
+    int first = firstValid == null ? -1 : firstValid.id;
+for (PaymentMethod pm : payments) {
     boolean expired = pm.expirationDate.getMonth().getValue() < LocalDate.now().getMonth().getValue()
             && pm.expirationDate.getYear() <= LocalDate.now().getYear();
-    int first = payments.stream().filter(f -> f.expirationDate.isAfter(LocalDate.now())).findFirst().get().id;
+
 %>
 <li class="list-group-item">
     <input <%=expired ? "disabled":""%>

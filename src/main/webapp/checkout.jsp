@@ -115,30 +115,16 @@
             <br/>
             <h5>Payment Method</h5>
             <ul class="list-group input-group" id="paymentList">
-                <% for (PaymentMethod pm : user.paymentMethods) {
-                    boolean expired = pm.expirationDate.getMonth().getValue() < LocalDate.now().getMonth().getValue()
-                            && pm.expirationDate.getYear() <= LocalDate.now().getYear();
-                    int first = user.paymentMethods.stream().filter(f -> f.expirationDate.isAfter(LocalDate.now())).findFirst().get().id;
+                <% PaymentMethod firstValid = user.paymentMethods.stream().filter(f -> f.expirationDate.isAfter(LocalDate.now()))
+                        .findFirst().orElse(null);
+                    int first = firstValid == null ? -1 : firstValid.id;
+
                 %>
-                <li class="list-group-item">
-                    <input <%=expired ? "disabled":""%>
-                            class="form-check-input me-1" type="radio" name="paymentNum"
-                            id="payment<%=pm.id%>" value="<%=pm.id%>" <%=pm.id == first? "checked": ""%>>
-                    <label for="payment<%=pm.id%>" class="form-check-label">
-                            <%= pm.paymentType %> ending in <%= pm.cardNumber.substring(pm.cardNumber.length() - 4) %><br>
-                        Expires <%=pm.expirationDate.getMonth().getValue()%>/<%=pm.expirationDate.getYear()%>
-                        <% if(expired){%>
-                            <span class="text-danger">Expired</span>
-                        <%}%>
-                    </label>
-                </li>
-                <% } %>
-                <li class="list-group-item">
-                    <button type="button" data-bs-toggle="modal" data-bs-target="#addPayment" class="btn btn-secondary">
-                        <i class="fa-solid fa-plus" style="color: #ffffff;"></i>
-                        Add New Payment Method
-                    </button>
-                </li>
+
+                <jsp:include page="paymentsList.jsp">
+                    <jsp:param name="id" value="<%=user.id%>"/>
+                </jsp:include>
+
             </ul>
             <br/>
             <input type="submit" class="btn btn-success" value="Place Order">

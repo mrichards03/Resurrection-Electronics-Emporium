@@ -66,9 +66,11 @@ CREATE TABLE ordersummary (
     totalAmount         DECIMAL(10,2),
     shipToAddressId     INT,
     userId              INT,
+    paymentId     INT,
     PRIMARY KEY (orderId),
     FOREIGN KEY (userId) REFERENCES users(userId),
-    FOREIGN KEY (shipToAddressId) REFERENCES address(addressId)
+    FOREIGN KEY (shipToAddressId) REFERENCES address(addressId),
+    FOREIGN KEY (paymentId) REFERENCES paymentmethod(paymentMethodId)
 );
 
 CREATE TABLE category (

@@ -12,6 +12,15 @@
 	{
 		<%session.setAttribute("loginMessage", "");%>
 	}
+
+	function showPW() {
+		var x = document.getElementById("inputPassword");
+		if (x.type === "password") {
+			x.type = "text";
+		} else {
+			x.type = "password";
+		}
+	}
 </script>
 <!DOCTYPE html>
 <html>
@@ -30,6 +39,8 @@
 		<div class="form-group">
 			<label for="inputPassword">Password</label>
 			<input type="password" class="form-control w-auto d-inline" name="password" id="inputPassword" placeholder="Password">
+			<br/>
+			<input type="checkbox" class="form-check-input me-1" onclick="showPW()">Show Password
 		</div>
 		<button type="submit" class="btn btn-primary my-2" name="Submit2" value="Log In">Submit</button>
 	</form>

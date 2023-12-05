@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import java.util.Optional;
 
 @WebServlet(name = "saveProduct", urlPatterns = {"/save-Product"})
+@MultipartConfig(maxFileSize = 16177215)    // upload file's size up to 16MB
 public class SaveProduct extends HttpServlet {
 
     @Override

@@ -1,22 +1,42 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>Customer Page</title>
-</head>
-<body>
 
 <%@ include file="header.jsp" %>
 <%@ include file="auth.jsp"%>
 <%@ page import="com.mackenzie.lab7.User" %>
-<%@ page import="com.mackenzie.lab7.Address" %>
 
+<!DOCTYPE html>
+<html>
+<head>
+<title>Customer Page</title>
+	<script>
+		function updateCustomer(){
+			var formData = new FormData(document.getElementById('cust'));
+
+			var xhr = new XMLHttpRequest();
+			xhr.open('POST', 'update-Customer', true);
+
+			xhr.onload = function() {
+				if (xhr.status === 200) {
+					showToast("Profile updated successfully", true);
+				} else if(xhr.status === 400) {
+					showToast("Failed to update profile. Invalid inputs", false);
+				}else{
+					showToast("Failed to update profile", false);
+				}
+			};
+
+			xhr.send(formData); // Send the form data to the server
+		}
+	</script>
+</head>
+<body>
+<div id="toastContainer"></div>
 <%
 	String id = (String) session.getAttribute("authenticatedUser");
 	User cust = User.getUserInfo(id);
 %>
 
-<form method="post" action="custChanged.jsp">
-	<table class="table">
+<form method="post" id="cust">
+	<table class="table input-group">
 		<tbody>
 		<tr>
 			<td><strong>Id</strong></td>
@@ -51,51 +71,16 @@
 		</tr>
 		<tr>
 		<tr>
-			<td><strong>User Id</strong></td>
+			<td><strong>User Name</strong></td>
 			<td>
-				<input type="text" name="userId" value="<%=cust.userName%>">
+				<input type="text" name="userName" value="<%=cust.userName%>">
 			</td>
 		</tr>
 		</tbody>
 	</table>
 	<br/>
-	<!-- Addresses !-->
-	<h3>Addresses</h3>
-	<table class="table">
-		<thead>
-		<tr>
-			<th>Street</th>
-			<th>City</th>
-			<th>State</th>
-			<th>Zip</th>
-			<th>Country</th>
-		</tr>
-		</thead>
-		<tbody>
-		<%
-			ArrayList<Address> addresses = cust.getAddresses();
-			for (Address address : addresses) {
-		%>
-		<tr>
-			<td>
-				<input type="text" name="street" value="<%=address.address%>">
-			</td>
-			<td>
-				<input type="text" name="city" value="<%=address.city%>">
-			</td>
-			<td>
-				<input type="text" name="state" value="<%=address.state%>">
-			</td>
-			<td>
-				<input type="text" name="zip" value="<%=address.postCode%>">
-			</td>
-			<td>
-				<input type="text" name="country" value="<%=address.country%>">
-			</td>
-		</tr>
-		<% } %>
-		</tbody>
-	<button class="btn btn-success" type="submit">Save</button>
+
+	<button class="btn btn-success" type="button" onclick="updateCustomer()">Save</button>
 	<button class="btn btn-danger" type="reset">Cancel</button>
 </form>
 
