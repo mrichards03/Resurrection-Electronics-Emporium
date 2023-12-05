@@ -1,10 +1,11 @@
 package com.mackenzie.lab7;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.*;
 
-public class Brand {
+public class Brand{
     public int id;
     public String name;
 
@@ -31,5 +32,10 @@ public class Brand {
             connections.closeConnection();
         }
         return brands;
+    }
+
+    public static Brand getBrand(int brandId) {
+        List<Brand> brands = getBrands();
+        return brands.stream().filter(c -> c.id == brandId).findFirst().orElse(null);
     }
 }

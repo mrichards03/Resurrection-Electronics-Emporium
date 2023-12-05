@@ -1,10 +1,11 @@
 package com.mackenzie.lab7;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.*;
 
-public class Category {
+public class Category{
     public int id;
     public String name;
 
@@ -31,5 +32,10 @@ public class Category {
             connections.closeConnection();
         }
         return categories;
+    }
+
+    public static Category getCategory(int categoryId) {
+        List<Category> categories = getCategories();
+        return categories.stream().filter(c -> c.id == categoryId).findFirst().orElse(null);
     }
 }

@@ -27,43 +27,45 @@ try
 
 	PreparedStatement stmt = con.con.prepareStatement(sql);
 	stmt.setInt(1,idVal);
+
 	ResultSet rst = stmt.executeQuery();
 
 	int BUFFER_SIZE = 10000;
 	byte[] data = new byte[BUFFER_SIZE];
-	if (rst.next())
-	{
-		// Copy stream of bytes from database to output stream for JSP/Servlet
+	InputStream istream = null;
 
-		response.reset();
-		response.setContentType("image/jpeg");
-        try(InputStream istream = rst.getBinaryStream(1);
-			OutputStream ostream = response.getOutputStream();){
-		if (istream == null) {
-			out.println("No image data found for the given ID.");
-			return;
-		}
+	if (rst.next()) {
+		istream = rst.getBinaryStream(1);
+	}
 
+	response.reset();
+	response.setContentType("image/jpeg");
+
+	if (istream == null) {
+		// Load the default image if no image data is found
+		String defaultImagePath = request.getServletContext().getRealPath("/")+"img/noImage.jpg";
+		File defaultImage = new File(defaultImagePath);
+		istream = new FileInputStream(defaultImage);
+	}
+
+	try (OutputStream ostream = response.getOutputStream()) {
 		if (ostream == null) {
 			out.println("Error obtaining output stream.");
 			return;
 		}
 
 		int count;
-		while ( (count = istream.read(data, 0, BUFFER_SIZE)) != -1)
+		while ((count = istream.read(data, 0, BUFFER_SIZE)) != -1) {
 			ostream.write(data, 0, count);
-
-		ostream.close();
-		istream.close();
-	}catch(Exception e){
-			out.println("image retrieval failed");
-			out.println(e);
 		}
-}}
-catch (SQLException ex) {
-	out.println(ex);
-}
-finally
+	}catch(Exception e)
+	{
+		out.println("Error: "+e);
+	}
+} catch (Exception e) {
+	out.println("Image retrieval failed");
+	out.println(e);
+}finally
 {
 	con.closeConnection();
 }

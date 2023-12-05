@@ -1,20 +1,28 @@
 <%@ page import="java.util.List" %>
-<%@ page import="com.mackenzie.lab7.Product" %>
-<%@ page import="com.mackenzie.lab7.Order" %>
+<%@ page import="com.mackenzie.lab7.*" %>
+<%@ page import="java.util.stream.Collectors" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF8"%>
 <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css">
 <!DOCTYPE html>
 <html>
 <head>
 <%@ include file="header.jsp" %>
+<%@ include file="auth.jsp"%>
 
 <title>YOUR NAME Grocery Order List</title>
 </head>
 <body>
 <%
 	List<Order> orders = Order.getOrders();
+	if(!isAdmin){
+		orders = orders.stream().filter(f -> f.custId == user.id).collect(Collectors.toList());
+	}
+	if(orders.isEmpty()){
+		out.println("<h1>No orders found</h1>");
+		return;
+	}else{
 %>
-
+<div class="m-4">
 <h1>Order List</h1>
 <table class="table border-dark border-1 table-striped">
 	<thead class="table-dark">
@@ -24,6 +32,7 @@
 			<th>Customer Id</th>
 			<th>Customer Name</th>
 			<th>Total Amount</th>
+			<th></th>
 		</tr>
 	</thead>
 
@@ -36,6 +45,7 @@
 		<td><%=o.custId%></td>
 		<td><%=o.custName%></td>
 		<td><%=o.totalStr%></td>
+		<td><%=o.isShipped ? "Shipped":"Not Shipped"%></td>
 	</tr>
 	<tr>
 		<td colspan="4">
@@ -43,17 +53,19 @@
 				<thead class="table-dark">
 					<tr>
 						<th>Product Id</th>
+						<th>Product Name</th>
 						<th>Quantity</th>
 						<th>Price</th>
 					</tr>
 				</thead>
 				<%
-					for (Product p : o.products){
+					for (OrderProduct p : o.products){
 				%>
 				<tr>
-					<td><%=p.id%></td>
+					<td><%=p.product.id%></td>
+					<td><%=p.product.name%></td>
 					<td><%=p.quantity%></td>
-					<td><%=p.priceStr%></td>
+					<td><%=p.product.priceStr%></td>
 				</tr>
 				<%
 					}
@@ -65,6 +77,7 @@
 		}
 	%>
 </table>
-
+<%}%>
+</div>
 </body>
 </html>

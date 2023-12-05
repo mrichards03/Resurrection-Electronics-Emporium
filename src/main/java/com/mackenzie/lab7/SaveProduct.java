@@ -12,15 +12,16 @@ import java.io.*;
 import java.sql.SQLException;
 import java.util.Optional;
 
-@WebServlet(name = "addProduct", urlPatterns = {"/add-Product"})
+@WebServlet(name = "saveProduct", urlPatterns = {"/save-Product"})
 @MultipartConfig(maxFileSize = 16177215)    // upload file's size up to 16MB
-public class AddProduct extends HttpServlet {
+public class SaveProduct extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request,
                           HttpServletResponse response) throws ServletException, IOException {
         boolean success = false;
         try {
+            int id = Integer.parseInt(request.getParameter("id"));
             String name = request.getParameter("name");
             double price = Double.parseDouble(request.getParameter("price"));
             String description = request.getParameter("desc");
@@ -39,19 +40,19 @@ public class AddProduct extends HttpServlet {
             Optional<Category> cat = Category.getCategories().stream().filter(f -> f.id == categoryId).findFirst();
             Optional<Brand> brand = Brand.getBrands().stream().filter(f -> f.id == brandId).findFirst();
 
-            Product prod = new Product(price, name, description, inputStream,
+            Product prod = new Product(id, price, name, description, inputStream,
                     cat.orElse(null),
                     brand.orElse(null));
 
-            success = Product.addProduct(prod);
+            success = Product.saveProduct(prod);
         } catch (SQLException e) {
             System.err.println(e);
         }finally {
             if(success){
-                request.getSession().setAttribute("message", "Product added successfully!");
+                request.getSession().setAttribute("message", "Product saved successfully!");
                 request.getSession().setAttribute("success", true);
             }else{
-                request.getSession().setAttribute("message", "Failed to add product!");
+                request.getSession().setAttribute("message", "Failed to saved product!");
                 request.getSession().setAttribute("success", false);
             }
             // Forward to listProd.jsp

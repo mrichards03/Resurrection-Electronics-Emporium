@@ -1,27 +1,30 @@
 package com.mackenzie.lab7;
 
 import java.io.InputStream;
-import java.sql.Blob;
-import java.sql.PreparedStatement;
+import java.io.Serializable;
+import java.sql.*;
+import java.util.*;
 
 public class Product {
     public int id;
     public String name;
     public double price;
     public String priceStr;
-    public int quantity;
     public String desc;
     public InputStream image;
     public Category category;
     public Brand brand;
 
 
-    public Product(int id, double price, int quantity, String name){
+    public Product(int id, double price, String name, String desc, InputStream image, Category category, Brand brand){
         this.id = id;
         this.price = price;
-        this.priceStr = String.format("$%.2f", price);
-        this.quantity = quantity;
         this.name = name;
+        this.priceStr = String.format("$%.2f", price);
+        this.desc = desc;
+        this.image = image;
+        this.category = category;
+        this.brand = brand;
     }
 
     public Product(double price, String name, String desc, InputStream image, Category category, Brand brand){
@@ -34,8 +37,9 @@ public class Product {
         this.brand = brand;
 
     }
+    public Product(){}
 
-    public static boolean addProduct(Product product){
+    public static boolean addProduct(Product product) throws SQLException {
         Connections connections = new Connections();
         boolean success = false;
         try {
@@ -52,18 +56,19 @@ public class Product {
             pstmt.setBlob(4, product.image);
             pstmt.setInt(5, product.category.id);
             pstmt.setInt(6, product.brand.id);
-            pstmt.executeUpdate();
-            success = true;
+            int count = pstmt.executeUpdate();
+            success = count > 0;
 
         }catch (Exception e) {
             System.err.println(e);
+            throw e;
         }finally {
             connections.closeConnection();
         }
         return success;
     }
 
-    public static boolean deleteProduct(int id){
+    public static boolean deleteProduct(int id) throws SQLException {
         Connections connections = new Connections();
         boolean success = false;
         try {
@@ -73,14 +78,104 @@ public class Product {
 
             PreparedStatement pstmt = connections.con.prepareStatement(sql);
             pstmt.setInt(1, id);
-            pstmt.executeUpdate();
-            success = true;
+            int count = pstmt.executeUpdate();
+            success = count > 0;
 
         }catch (Exception e) {
             System.err.println(e);
+            throw e;
         }finally {
             connections.closeConnection();
         }
         return success;
+    }
+
+    public static List<Product> getProducts(String search){
+        Connections con = new Connections();
+        List<Product> prods = new ArrayList<>();
+        try {
+            con.getConnection();
+
+            PreparedStatement prodsQuery;
+            boolean hasName = search != null && !search.isEmpty();
+            if (hasName) {
+                search = "%" + search + "%";
+                prodsQuery = con.con.prepareStatement("select * from product where productName like ? ");
+                prodsQuery.setString(1, search);
+            } else {
+                prodsQuery = con.con.prepareStatement("select * from product");
+            }
+            ResultSet rsprods = prodsQuery.executeQuery();
+
+            while (rsprods.next()) {
+                prods.add(new Product(
+                        rsprods.getInt("productId"),
+                        rsprods.getDouble("productPrice"),
+                        rsprods.getString("productName"),
+                        rsprods.getString("productDesc"),
+                        rsprods.getBinaryStream("productImage"),
+                        Category.getCategory(rsprods.getInt("categoryId")),
+                        Brand.getBrand(rsprods.getInt("brandId"))
+                ));
+
+            }
+        }catch (Exception e) {
+            System.err.println(e);
+        }finally {
+            con.closeConnection();
+        }
+        return prods;
+    }
+
+    public static boolean saveProduct(Product prod) throws SQLException {
+        Connections con = new Connections();
+        boolean success = false;
+        try {
+            con.getConnection();
+
+            PreparedStatement pstmt = con.con.prepareStatement("UPDATE product SET productName = ?, " +
+                    "productPrice = ?, productDesc = ?, categoryId = ?, brandId = ? WHERE productId = ?");
+            pstmt.setString(1, prod.name);
+            pstmt.setDouble(2, prod.price);
+            pstmt.setString(3, prod.desc);
+            pstmt.setInt(4, prod.category.id);
+            pstmt.setInt(5, prod.brand.id);
+            pstmt.setInt(6, prod.id);
+            int count = pstmt.executeUpdate();
+            success = count > 0;
+            if(prod.image != null){
+                pstmt = con.con.prepareStatement("UPDATE product SET productImage = ? WHERE productId = ?");
+                pstmt.setBlob(1, prod.image);
+                pstmt.setInt(2, prod.id);
+                count = pstmt.executeUpdate();
+                success = count > 0;
+            }
+
+        }catch (Exception e) {
+            System.err.println(e);
+            throw e;
+        }finally {
+            con.closeConnection();
+        }
+        return success;
+    }
+
+    public int getInvQuant(){
+        Connections con = new Connections();
+        int quantity = 0;
+        try{
+            con.getConnection();
+            PreparedStatement stmt = con.con.prepareStatement("select quantity from productinventory where productId = ?");
+            stmt.setInt(1, id);
+            ResultSet rst = stmt.executeQuery();
+            rst.next();
+            quantity = rst.getInt("quantity");
+        }catch (Exception e){
+            System.err.println("SQLException: " + e);
+        }
+        finally {
+            con.closeConnection();
+        }
+        return quantity;
     }
 }
