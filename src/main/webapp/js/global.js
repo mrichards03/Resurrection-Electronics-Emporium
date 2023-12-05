@@ -1,6 +1,7 @@
 <!--  keeps track of history without duplicates so login can go to previous page -->
 var url = window.location.pathname;
 
+
 addPage(url);
 
 // Back button function
