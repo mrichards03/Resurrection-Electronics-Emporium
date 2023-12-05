@@ -2,17 +2,17 @@
 <%@ page import="com.mackenzie.lab7.*" %>
 <%@ page import="java.util.stream.Collectors" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF8"%>
-<link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css">
-<!DOCTYPE html>
+<%@ include file="header.jsp" %><!DOCTYPE html>
 <html>
 <head>
-<%@ include file="header.jsp" %>
-<%@ include file="auth.jsp"%>
-
 <title>YOUR NAME Grocery Order List</title>
 </head>
 <body>
 <%
+	if(!LoggedIn){
+		response.sendRedirect("login.jsp");
+		return;
+	}
 	List<Order> orders = Order.getOrders();
 	if(!isAdmin){
 		orders = orders.stream().filter(f -> f.custId == user.id).collect(Collectors.toList());
@@ -20,10 +20,10 @@
 	if(orders.isEmpty()){
 		out.println("<h1>No orders found</h1>");
 		return;
-	}else{
+	}
 %>
 <div class="m-4">
-<h1>Order List</h1>
+<h1>Orders</h1>
 <table class="table border-dark border-1 table-striped">
 	<thead class="table-dark">
 		<tr>
@@ -77,7 +77,6 @@
 		}
 	%>
 </table>
-<%}%>
 </div>
 </body>
 </html>

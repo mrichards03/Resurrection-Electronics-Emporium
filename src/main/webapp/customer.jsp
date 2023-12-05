@@ -8,6 +8,7 @@
 <%@ include file="header.jsp" %>
 <%@ include file="auth.jsp"%>
 <%@ page import="com.mackenzie.lab7.User" %>
+<%@ page import="com.mackenzie.lab7.Address" %>
 
 <%
 	String id = (String) session.getAttribute("authenticatedUser");
@@ -49,35 +50,6 @@
 			</td>
 		</tr>
 		<tr>
-			<td><strong>Address</strong></td>
-			<td>
-				<input type="text" name="address" value="<%=cust.address%>">
-			</td>
-		</tr>
-		<tr>
-			<td><strong>City</strong></td>
-			<td>
-				<input type="text" name="city" value="<%=cust.city%>">
-			</td>
-		</tr>
-		<tr>
-			<td><strong>State</strong></td>
-			<td>
-				<input type="text" name="state" value="<%=cust.state%>">
-			</td>
-		</tr>
-		<tr>
-			<td><strong>Postal Code</strong></td>
-			<td>
-				<input type="text" name="postCode" value="<%=cust.postCode%>">
-			</td>
-		</tr>
-		<tr>
-			<td><strong>Country</strong></td>
-			<td>
-				<input type="text" name="country" value="<%=cust.country%>">
-			</td>
-		</tr>
 		<tr>
 			<td><strong>User Id</strong></td>
 			<td>
@@ -86,6 +58,43 @@
 		</tr>
 		</tbody>
 	</table>
+	<br/>
+	<!-- Addresses !-->
+	<h3>Addresses</h3>
+	<table class="table">
+		<thead>
+		<tr>
+			<th>Street</th>
+			<th>City</th>
+			<th>State</th>
+			<th>Zip</th>
+			<th>Country</th>
+		</tr>
+		</thead>
+		<tbody>
+		<%
+			ArrayList<Address> addresses = cust.getAddresses();
+			for (Address address : addresses) {
+		%>
+		<tr>
+			<td>
+				<input type="text" name="street" value="<%=address.address%>">
+			</td>
+			<td>
+				<input type="text" name="city" value="<%=address.city%>">
+			</td>
+			<td>
+				<input type="text" name="state" value="<%=address.state%>">
+			</td>
+			<td>
+				<input type="text" name="zip" value="<%=address.postCode%>">
+			</td>
+			<td>
+				<input type="text" name="country" value="<%=address.country%>">
+			</td>
+		</tr>
+		<% } %>
+		</tbody>
 	<button class="btn btn-success" type="submit">Save</button>
 	<button class="btn btn-danger" type="reset">Cancel</button>
 </form>

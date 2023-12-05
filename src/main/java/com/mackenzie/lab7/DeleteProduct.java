@@ -8,7 +8,6 @@ import java.io.*;
 import java.sql.SQLException;
 
 @WebServlet(name = "deleteProduct", urlPatterns = {"/delete-Product"})
-@MultipartConfig(maxFileSize = 16177215)    // upload file's size up to 16MB
 public class DeleteProduct extends HttpServlet {
 
     @Override

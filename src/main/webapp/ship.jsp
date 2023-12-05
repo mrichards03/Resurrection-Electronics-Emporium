@@ -6,13 +6,48 @@
 <html>
 <head>
     <title>Ship</title>
+    <!-- Script from https://jsfiddle.net/bubencode/dn6xc932/ !-->
+    <script>
+        // Countdown timer for redirecting to another URL after several seconds
+
+        var seconds = 5; // seconds for HTML
+        var foo; // variable for clearInterval() function
+
+        function redirect() {
+            document.location.href = 'admin.jsp';
+        }
+
+        function updateSecs() {
+            document.getElementById("seconds").innerHTML = seconds;
+            seconds--;
+            if (seconds == -1) {
+                clearInterval(foo);
+                redirect();
+            }
+        }
+
+        function countdownTimer() {
+            foo = setInterval(function () {
+                updateSecs()
+            }, 1000);
+        }
+
+    </script>
 </head>
 <body>
 <%
     List<Order> orders = Order.readyToShip();
-%>
+    if(orders.isEmpty()){%>
+        <script>
+            countdownTimer();
+        </script>
+        <div class="m-4">
+            <h1>No Orders to Ship</h1>
+            <p>You should be automatically redirected in <span id="seconds">5</span> seconds.</p>
+        </div>
+    <%}else{%>
 <div class="m-4">
-    <h1>Order List</h1>
+    <h1>Orders </h1>
     <table class="table border-dark border-1 table-striped">
         <thead class="table-dark">
         <tr>
@@ -71,5 +106,6 @@
         %>
     </table>
 </div>
+<%}%>
 </body>
 </html>

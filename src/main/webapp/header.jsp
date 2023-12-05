@@ -11,47 +11,7 @@
 <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css">
 <script type="text/javascript" src="bootstrap/js/bootstrap.bundle.js"></script>
 <script src="https://kit.fontawesome.com/032953b54f.js" crossorigin="anonymous"></script>
-
-<!--  keeps track of history without duplicates so login can go to previous page -->
-<script>
-    var url = window.location.pathname;
-    addPage(url);
-
-    // Back button function
-    function back(){
-        var pageHistory = JSON.parse(sessionStorage.pageHistory || '[]');
-
-        // Find this page in history
-        var thisPageIndex = pageHistory.indexOf(url);
-        if(thisPageIndex > 1 )
-            window.location.href = pageHistory[thisPageIndex - 2];
-    }
-
-    function addPage(url){
-        var pageHistory = JSON.parse(sessionStorage.pageHistory || '[]');
-
-        // Find this page in history
-        var thisPageIndex = pageHistory.indexOf(url);
-
-        if(url === "/shop/addcart.jsp"){ //don't include in-between pages
-            url = "/shop/showcart.jsp";
-        }
-        // If this page was not in the history, add it to the top of the stack
-        if( thisPageIndex < 0){
-            pageHistory.push(url);
-            thisPageIndex = pageHistory.length -1;
-
-            // Wipe the forward history
-        }else if(thisPageIndex < pageHistory.length -1){
-            for(; thisPageIndex < pageHistory.length -1;)
-                pageHistory.pop();
-        }
-
-        // Store history array
-        sessionStorage.pageHistory = JSON.stringify(pageHistory);
-    }
-
-</script>
+<script src="js/global.js"></script>
 
 <!DOCTYPE html>
 <html  data-bs-theme="dark">
@@ -71,11 +31,13 @@
                         <a class="nav-link" href="listProd.jsp" aria-current="page">Products</a>
                     </li>
                     <% } %>
+                    <%if(LoggedIn){ %>
                     <li class="nav-item">
                         <a class="nav-link" href="listorder.jsp" aria-current="page">
                             <%=isAdmin ? "Orders":"My Orders"%>
                         </a>
                     </li>
+                    <% } %>
                     <% if(!isAdmin){ %>
                     <li class="nav-item">
                         <a class="nav-link" href="showcart.jsp" aria-current="page">

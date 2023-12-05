@@ -19,7 +19,7 @@
 		request.setAttribute("loginMessage", null);
 		%>
 		<script>
-			back();
+			redirect();
 		</script>
 		<%
 	}

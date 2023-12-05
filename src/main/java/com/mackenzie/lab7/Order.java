@@ -18,7 +18,10 @@ public class Order {
     public String totalStr;
     public double total;
     public boolean isShipped;
+    public Address address;
     public ArrayList<OrderProduct> products;
+    public Address shippingAddress;
+    public PaymentMethod paymentMethod;
 
     public Order(int id, LocalDateTime date, int custId, String custName, double total, boolean isShipped) {
         NumberFormat currFormat = NumberFormat.getCurrencyInstance();
@@ -31,6 +34,11 @@ public class Order {
         this.isShipped = isShipped;
         products = new ArrayList<>();
     }
+
+    public Order() {
+
+    }
+
     public static List<Order> getOrders(){
 
         List<Order> orders = new ArrayList<>();

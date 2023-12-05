@@ -1,0 +1,88 @@
+package com.mackenzie.lab7;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.sql.*;
+public class PaymentMethod {
+    public int id;
+    public String paymentType;
+    public String cardNumber;
+    public String nameOnCard;
+    public LocalDate expirationDate;
+    public String securityCode;
+    public int userId;
+
+    public PaymentMethod(int id, String paymentType, String cardNumber,  String nameOnCard, LocalDate expirationDate, String securityCode, int userId)
+    {
+        this.id = id;
+        this.paymentType = paymentType;
+        this.cardNumber = cardNumber;
+        this.nameOnCard = nameOnCard;
+        this.expirationDate = expirationDate;
+        this.securityCode = securityCode;
+        this.userId = userId;
+    }
+
+    public PaymentMethod(String paymentType, String cardNumber,  String nameOnCard, LocalDate expirationDate, String securityCode, int userId)
+    {
+        this.paymentType = paymentType;
+        this.cardNumber = cardNumber;
+        this.nameOnCard = nameOnCard;
+        this.expirationDate = expirationDate;
+        this.securityCode = securityCode;
+        this.userId = userId;
+    }
+
+    public static List<PaymentMethod> getPaymentMethods(int userId){
+        Connections connections = new Connections();
+        List<PaymentMethod> paymentMethods = new ArrayList<>();
+        try{
+            connections.getConnection();
+
+            String sql = "SELECT * FROM paymentmethod join users on paymentmethod.customerId = users.userId WHERE customerId = ?";
+            PreparedStatement pstmt = connections.con.prepareStatement(sql);
+            pstmt.setInt(1, userId);
+            ResultSet rs = pstmt.executeQuery();
+            while(rs.next()){
+                PaymentMethod paymentMethod = new PaymentMethod(rs.getInt("paymentMethodId"),
+                        rs.getString("paymentType"),
+                        rs.getString("paymentNumber"),
+                        rs.getString("nameOnCard"),
+                        LocalDate.parse(rs.getString("paymentExpiryDate")),
+                        rs.getString("securityCode"),
+                        rs.getInt("customerId"));
+                paymentMethods.add(paymentMethod);
+            }
+
+        }catch (Exception e) {
+            System.err.println(e);
+        }finally {
+            connections.closeConnection();
+        }
+        return paymentMethods;
+    }
+
+    public static boolean addMethod(PaymentMethod pay) throws SQLException {
+        Connections connections = new Connections();
+        boolean success = false;
+        try {
+            connections.getConnection();
+            String sql = "INSERT INTO paymentmethod (paymentType, paymentNumber, nameOnCard, paymentExpiryDate, securityCode, customerId) VALUES (?, ?, ?, ?, ?, ?)";
+            PreparedStatement pstmt = connections.con.prepareStatement(sql);
+            pstmt.setString(1, pay.paymentType);
+            pstmt.setString(2, pay.cardNumber);
+            pstmt.setString(3, pay.nameOnCard);
+            pstmt.setString(4, pay.expirationDate.toString());
+            pstmt.setString(5, pay.securityCode);
+            pstmt.setInt(6, pay.userId);
+            success = pstmt.executeUpdate() > 0;
+        } catch (Exception e) {
+            System.err.println(e);
+            throw e;
+        } finally {
+            connections.closeConnection();
+        }
+        return success;
+    }
+}

@@ -50,7 +50,7 @@
 %>
 
 
-<button class="btn btn-secondary"><a class="text-decoration-none text-white" href="index.jsp">Back to Main Page</a></button>
+<button class="btn btn-secondary"><a class="text-decoration-none text-white" href="ship.jsp">Back to Orders</a></button>
 
 </body>
 </html>
