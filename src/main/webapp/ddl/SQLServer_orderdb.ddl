@@ -4,19 +4,20 @@ go
 USE orders;
 go
 
-DROP TRIGGER updateInventory;
-DROP TABLE review;
-DROP TABLE shipment;
-DROP TABLE productinventory;
-DROP TABLE warehouse;
-DROP TABLE orderproduct;
-DROP TABLE incart;
-DROP TABLE product;
-DROP TABLE category;
-DROP TABLE ordersummary;
-DROP TABLE paymentmethod;
-DROP TABLE users;
-DROP TABLE brand;
+DROP TRIGGER IF EXISTS updateInventory;
+DROP TABLE IF EXISTS review;
+DROP TABLE IF EXISTS shipment;
+DROP TABLE IF EXISTS productinventory;
+DROP TABLE IF EXISTS warehouse;
+DROP TABLE IF EXISTS orderproduct;
+DROP TABLE IF EXISTS incart;
+DROP TABLE IF EXISTS product;
+DROP TABLE IF EXISTS category;
+DROP TABLE IF EXISTS ordersummary;
+DROP TABLE IF EXISTS paymentmethod;
+DROP TABLE IF EXISTS address;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS brand;
 
 
 CREATE TABLE users (
@@ -66,10 +67,8 @@ CREATE TABLE ordersummary (
     shipToAddressId     INT,
     userId              INT,
     PRIMARY KEY (orderId),
-    FOREIGN KEY (userId) REFERENCES users(userId)
-        ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (userId) REFERENCES users(userId),
     FOREIGN KEY (shipToAddressId) REFERENCES address(addressId)
-        ON UPDATE CASCADE ON DELETE SET NULL
 );
 
 CREATE TABLE category (

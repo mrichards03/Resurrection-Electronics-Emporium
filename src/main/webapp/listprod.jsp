@@ -53,8 +53,9 @@
 		<h2>All Products</h2>
 	<% }
 		if(isAdmin){%>
-			<button type="button" class="btn btn-primary mb-2 d-flex justify-content-end" data-bs-toggle="modal" data-bs-target="#addProduct">
-				Add Product
+			<button type="button" class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#addProduct">
+				<i class="fa-solid fa-plus" style="color: #ffffff;"></i>
+				New Product
 			</button>
 	<%}%>
 	<div class="row row-cols-1 row-cols-md-<%=isAdmin? "4":"5"%> g-4">
