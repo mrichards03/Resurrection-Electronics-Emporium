@@ -6,7 +6,7 @@
 
 <html>
 <head>
-<title>YOUR NAME Grocery Shipment Processing</title>
+<title>ReSurrected Electronics Emporium Shipment Processing</title>
 </head>
 <body>
 

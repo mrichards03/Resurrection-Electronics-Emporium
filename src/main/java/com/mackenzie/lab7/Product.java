@@ -100,10 +100,10 @@ public class Product {
             boolean hasName = search != null && !search.isEmpty();
             if (hasName) {
                 search = "%" + search + "%";
-                prodsQuery = con.con.prepareStatement("select * from product where productName like ? ");
+                prodsQuery = con.con.prepareStatement("select * from product where productName like ? and is_deleted = 'FALSE'");
                 prodsQuery.setString(1, search);
             } else {
-                prodsQuery = con.con.prepareStatement("select * from product");
+                prodsQuery = con.con.prepareStatement("select * from product where is_deleted = 'FALSE'");
             }
             ResultSet rsprods = prodsQuery.executeQuery();
 
