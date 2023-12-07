@@ -6,17 +6,15 @@ import java.util.List;
 import java.sql.*;
 public class PaymentMethod {
     public int id;
-    public String paymentType;
     public String cardNumber;
     public String nameOnCard;
     public LocalDate expirationDate;
     public String securityCode;
     public int userId;
 
-    public PaymentMethod(int id, String paymentType, String cardNumber,  String nameOnCard, LocalDate expirationDate, String securityCode, int userId)
+    public PaymentMethod(int id, String cardNumber,  String nameOnCard, LocalDate expirationDate, String securityCode, int userId)
     {
         this.id = id;
-        this.paymentType = paymentType;
         this.cardNumber = cardNumber;
         this.nameOnCard = nameOnCard;
         this.expirationDate = expirationDate;
@@ -24,9 +22,8 @@ public class PaymentMethod {
         this.userId = userId;
     }
 
-    public PaymentMethod(String paymentType, String cardNumber,  String nameOnCard, LocalDate expirationDate, String securityCode, int userId)
+    public PaymentMethod(String cardNumber,  String nameOnCard, LocalDate expirationDate, String securityCode, int userId)
     {
-        this.paymentType = paymentType;
         this.cardNumber = cardNumber;
         this.nameOnCard = nameOnCard;
         this.expirationDate = expirationDate;
@@ -46,7 +43,6 @@ public class PaymentMethod {
             ResultSet rs = pstmt.executeQuery();
             while(rs.next()){
                 PaymentMethod paymentMethod = new PaymentMethod(rs.getInt("paymentMethodId"),
-                        rs.getString("paymentType"),
                         rs.getString("paymentNumber"),
                         rs.getString("nameOnCard"),
                         LocalDate.parse(rs.getString("paymentExpiryDate")),
@@ -68,14 +64,13 @@ public class PaymentMethod {
         boolean success = false;
         try {
             connections.getConnection();
-            String sql = "INSERT INTO paymentmethod (paymentType, paymentNumber, nameOnCard, paymentExpiryDate, securityCode, customerId) VALUES (?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO paymentmethod (paymentNumber, nameOnCard, paymentExpiryDate, securityCode, customerId) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement pstmt = connections.con.prepareStatement(sql);
-            pstmt.setString(1, pay.paymentType);
-            pstmt.setString(2, pay.cardNumber);
-            pstmt.setString(3, pay.nameOnCard);
-            pstmt.setString(4, pay.expirationDate.toString());
-            pstmt.setString(5, pay.securityCode);
-            pstmt.setInt(6, pay.userId);
+            pstmt.setString(1, pay.cardNumber);
+            pstmt.setString(2, pay.nameOnCard);
+            pstmt.setString(3, pay.expirationDate.toString());
+            pstmt.setString(4, pay.securityCode);
+            pstmt.setInt(5, pay.userId);
             success = pstmt.executeUpdate() > 0;
         } catch (Exception e) {
             System.err.println(e);

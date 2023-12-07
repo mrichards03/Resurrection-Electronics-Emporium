@@ -108,9 +108,9 @@
                     <!-- Buttons -->
                     <% if (prod.id > -1) { %>
                     <div class="row">
-                        <button type="submit" class="btn btn-success m-2 col-5">Save</button>
+                        <button type="submit" class="btn btn-success m-2 col-4">Save</button>
                         <div class="col d-inline"></div>
-                        <button type="reset" class="btn btn-secondary m-2 col-5">Cancel</button>
+                        <button type="reset" class="btn btn-secondary m-2 col-4">Cancel</button>
                     </div>
                     <% }%>
                 </div>

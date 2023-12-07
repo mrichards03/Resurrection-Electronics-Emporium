@@ -7,6 +7,7 @@ import jakarta.servlet.http.*;
 import java.io.*;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 
 @WebServlet(name = "addPayment", urlPatterns = {"/add-Payment"})
@@ -18,21 +19,21 @@ public class AddPayment extends HttpServlet {
                           HttpServletResponse response) throws ServletException, IOException {
         boolean success = false;
         try {
-            String bank = request.getParameter("bank");
             String cardNum = request.getParameter("cardNum");
             String name = request.getParameter("name");
             String expir = request.getParameter("expir");
             String cvv = request.getParameter("cvv");
             int userId = Integer.parseInt(request.getParameter("userId"));
 
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            LocalDate date = LocalDate.parse("01/" + expir, formatter);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/yy");
+            YearMonth yearMonth = YearMonth.parse(expir, formatter);
+            LocalDate date = yearMonth.atDay(1);
 
-            PaymentMethod pay = new PaymentMethod(bank, cardNum, name, date, cvv, userId);
+            PaymentMethod pay = new PaymentMethod(cardNum, name, date, cvv, userId);
 
             success = PaymentMethod.addMethod(pay);
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.err.println(e);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR); // Set error status code
         }finally {

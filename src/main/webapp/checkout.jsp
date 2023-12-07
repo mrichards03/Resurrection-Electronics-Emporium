@@ -41,8 +41,13 @@
         }
 
         function addPayment(userid){
-            var formData = new FormData(document.getElementById('formAddPayment'));
+            var myModal = bootstrap.Modal.getInstance(document.getElementById('addPayment'));
 
+            if (!validateFormPayment()) {
+                return;
+            }
+            myModal.hide();
+            var formData = new FormData(document.getElementById('formAddPayment'));
             var xhr = new XMLHttpRequest();
             xhr.open('POST', 'add-Payment', true);
 
@@ -57,7 +62,63 @@
 
             xhr.send(formData); // Send the form data to the server
         }
-        function updatePaymentList(userid) {
+
+        function validateFormPayment() {
+            var isValid = true;
+
+            var nameElement = document.getElementById('name');
+            var cardName = nameElement.value;
+            var numElement = document.getElementById('cardNum');
+            var cardNumber = numElement.value;
+            var expirElement = document.getElementById('expir');
+            var expir = expirElement.value;
+            var cvvElement = document.getElementById('cvv');
+            var cvv = cvvElement.value;
+
+            // Clear any previous custom validity messages
+            nameElement.setCustomValidity("");
+            numElement.setCustomValidity("");
+            expirElement.setCustomValidity("");
+            cvvElement.setCustomValidity("");
+
+            // Validate Cardholder's Name
+            if (!cardName.trim()) {
+                nameElement.setCustomValidity("Cardholder's name is required.");
+                isValid = false;
+            }
+
+            // Validate Card Number (16 digits)
+            if (!/^\d{16}$/.test(cardNumber)) {
+                numElement.setCustomValidity("Card number must be 16 digits.");
+                isValid = false;
+            }
+
+            var regex = /^(0[1-9]|1[0-2])\/\d{2}$/;
+            // Validate Expiration Month (1-12)
+            if (!regex.test(expir)) {
+                expirElement.setCustomValidity("Expiration date is invalid.");
+                isValid = false;
+            }
+
+            // Validate CVV (3 digits)
+            if (!/^\d{3}$/.test(cvv)) {
+                cvvElement.setCustomValidity("CVV must be 3 digits.");
+                isValid = false;
+            }
+
+            // Trigger the browser's default validity UI
+            if (!isValid) {
+                nameElement.reportValidity();
+                numElement.reportValidity();
+                expirElement.reportValidity();
+                cvvElement.reportValidity();
+            }
+
+            return isValid;
+        }
+
+
+    function updatePaymentList(userid) {
             var xhr = new XMLHttpRequest();
             xhr.open('GET', '/shop/getUpdatedPayments?userId=' + encodeURIComponent(userid), true);
 
@@ -71,24 +132,44 @@
         }
     </script>
 </head>
+<%
+    if(!LoggedIn){
+        response.sendRedirect("login.jsp");
+        return;
+    }
+    if(user.addresses == null || user.addresses.isEmpty()){
+        user.addresses = Address.getAddresses(user.id);
+    }
+    if(user.paymentMethods == null || user.paymentMethods.isEmpty()){
+        user.paymentMethods = PaymentMethod.getPaymentMethods(user.id);
+    }
+
+    // Get the current list of products
+    @SuppressWarnings({"unchecked"})
+    HashMap<String, ArrayList<Object>> productList = (HashMap<String, ArrayList<Object>>) session.getAttribute("productList");
+    NumberFormat currFormat = NumberFormat.getCurrencyInstance();
+
+    if(productList == null){ %>
+
+<script>
+    countdownTimer('listProd.jsp');
+</script>
+<div class="m-4">
+    <h1>No products in cart</h1>
+    <p>You should be automatically redirected in <span id="seconds">5</span> seconds.</p>
+</div>
+
+<%
+        return;
+    }
+%>
+
 <body>
 <div id="toastContainer"></div>
 <div class="m-4 row">
     <div class="col-10">
         <h1>Checkout</h1>
-        <%
-            if(!LoggedIn){
-                response.sendRedirect("login.jsp");
-                return;
-            }
-            if(user.addresses == null || user.addresses.isEmpty()){
-                user.addresses = Address.getAddresses(user.id);
-            }
-            if(user.paymentMethods == null || user.paymentMethods.isEmpty()){
-                user.paymentMethods = PaymentMethod.getPaymentMethods(user.id);
-            }
 
-        %>
         <form action="order.jsp" method="post">
             <!-- Shipping Addresses -->
             <h5>Your Addresses</h5>
@@ -136,12 +217,6 @@
     <!-- Cart -->
     <div class="col border">
         <h5 class="mt-2">Your Cart</h5>
-        <%
-            // Get the current list of products
-            @SuppressWarnings({"unchecked"})
-            HashMap<String, ArrayList<Object>> productList = (HashMap<String, ArrayList<Object>>) session.getAttribute("productList");
-            NumberFormat currFormat = NumberFormat.getCurrencyInstance();
-        %>
         <ul class="list-group list-group-flush">
             <%
                 double total = 0;
@@ -257,34 +332,30 @@
                 <form class="row g-3" id="formAddPayment" novalidate>
                     <input hidden name="userId" value="<%=user.id%>">
                     <div class="">
-                        <label for="bank" class="form-label">Bank</label>
-                        <input name="bank" type="text" class="form-control" id="bank" required>
-                    </div>
-                    <div class="">
-                        <label for="cardNum" class="form-label">Card Number</label>
-                        <input name="cardNum" type="number" min="0" max="999999999" class="form-control" id="cardNum" required>
-                    </div>
-                    <div class="">
                         <label for="name" class="form-label">Name on Card</label>
                         <input name="name" type="text" class="form-control" id="name" required>
                     </div>
+                    <div class="">
+                        <label for="cardNum" class="form-label">Card Number</label>
+                        <input name="cardNum" type="text" class="form-control" id="cardNum">
+                    </div>
                     <div class="row mt-2">
                         <div class="col">
-                            <label for="expir" class="form-label">Expiration Date(MM/YYYY)</label>
-                            <input name="expir" type="text" class="form-control" id="expir" required>
+                            <label for="expir" class="form-label">Expiration Date(MM/YY)</label>
+                            <input type="text" placeholder="MM/YY" name="expir" id="expir" class="form-control" />
                         </div>
                         <div class="col">
                             <label for="cvv" class="form-label">Security Code</label>
-                            <input name="cvv" type="text" class="form-control" id="cvv" required>
+                            <input name="cvv" type="text" class="form-control" id="cvv">
                         </div>
                     </div>
 
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success mb-2" onclick="addPayment(<%=user.id%>)">Add</button>
+                        <button class="btn btn-secondary mb-2" data-bs-dismiss="modal">Cancel</button>
+                    </div>
 
                 </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-success mb-2" data-bs-dismiss="modal" onclick="addPayment(<%=user.id%>)">Add</button>
-                <button class="btn btn-secondary mb-2" data-bs-dismiss="modal">Cancel</button>
             </div>
         </div>
     </div>

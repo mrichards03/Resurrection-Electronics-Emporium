@@ -60,3 +60,27 @@ function showToast(message, isSuccess) {
 
     xhr.send();
 }
+
+// Countdown timer for redirecting to another URL after several seconds
+
+var seconds = 5; // seconds for HTML
+var foo; // variable for clearInterval() function
+
+function pageRedirect(page) {
+    document.location.href = page;
+}
+
+function updateSecs(page) {
+    document.getElementById("seconds").innerHTML = seconds;
+    seconds--;
+    if (seconds === -1) {
+        clearInterval(foo);
+        pageRedirect(page);
+    }
+}
+
+function countdownTimer(page) {
+    foo = setInterval(function () {
+        updateSecs(page)
+    }, 1000);
+}

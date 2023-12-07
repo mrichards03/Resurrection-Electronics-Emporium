@@ -8,29 +8,7 @@
     <title>Ship</title>
     <!-- Script from https://jsfiddle.net/bubencode/dn6xc932/ !-->
     <script>
-        // Countdown timer for redirecting to another URL after several seconds
 
-        var seconds = 5; // seconds for HTML
-        var foo; // variable for clearInterval() function
-
-        function redirect() {
-            document.location.href = 'admin.jsp';
-        }
-
-        function updateSecs() {
-            document.getElementById("seconds").innerHTML = seconds;
-            seconds--;
-            if (seconds == -1) {
-                clearInterval(foo);
-                redirect();
-            }
-        }
-
-        function countdownTimer() {
-            foo = setInterval(function () {
-                updateSecs()
-            }, 1000);
-        }
 
     </script>
 </head>
@@ -39,7 +17,7 @@
     List<Order> orders = Order.readyToShip();
     if(orders.isEmpty()){%>
         <script>
-            countdownTimer();
+            countdownTimer('admin.jsp');
         </script>
         <div class="m-4">
             <h1>No Orders to Ship</h1>

@@ -7,12 +7,16 @@ if(payments == null){
     int id = Integer.parseInt(request.getParameter("id"));
     payments = PaymentMethod.getPaymentMethods(id);
 }
-    PaymentMethod firstValid = payments.stream().filter(f -> f.expirationDate.isAfter(LocalDate.now()))
+    PaymentMethod firstValid = payments.stream().filter(
+            f -> (f.expirationDate.getMonth().getValue() > LocalDate.now().getMonth().getValue() &&
+                    f.expirationDate.getYear() == LocalDate.now().getYear()) ||
+            f.expirationDate.getYear() > LocalDate.now().getYear())
             .findFirst().orElse(null);
     int first = firstValid == null ? -1 : firstValid.id;
 for (PaymentMethod pm : payments) {
-    boolean expired = pm.expirationDate.getMonth().getValue() < LocalDate.now().getMonth().getValue()
-            && pm.expirationDate.getYear() <= LocalDate.now().getYear();
+    boolean expired = (pm.expirationDate.getMonth().getValue() < LocalDate.now().getMonth().getValue() &&
+            pm.expirationDate.getYear() == LocalDate.now().getYear()) ||
+            pm.expirationDate.getYear() <= LocalDate.now().getYear();
 
 %>
 <li class="list-group-item">
@@ -20,10 +24,10 @@ for (PaymentMethod pm : payments) {
             class="form-check-input me-1" type="radio" name="paymentNum"
             id="payment<%=pm.id%>" value="<%=pm.id%>" <%=pm.id == first? "checked": ""%>>
     <label for="payment<%=pm.id%>" class="form-check-label">
-        <%= pm.paymentType %> ending in <%= pm.cardNumber.substring(pm.cardNumber.length() - 4) %><br>
+        Card ending in <%= pm.cardNumber.substring(pm.cardNumber.length() - 4) %><br>
         Expires <%=pm.expirationDate.getMonth().getValue()%>/<%=pm.expirationDate.getYear()%>
         <% if(expired){%>
-        <span class="text-danger">Expired</span>
+            <span class="text-danger">Expired</span>
         <%}%>
     </label>
 </li>
