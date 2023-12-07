@@ -5,7 +5,7 @@
 <%@ include file="header.jsp" %><!DOCTYPE html>
 <html>
 <head>
-<title>YOUR NAME Grocery Order List</title>
+<title>ReSurrected Electronics Emporium orders</title>
 </head>
 <body>
 <%

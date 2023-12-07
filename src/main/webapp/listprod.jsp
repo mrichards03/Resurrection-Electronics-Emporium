@@ -31,7 +31,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>YOUR NAME Grocery</title>
+<title>ReSurrected Electronics Emporium</title>
 </head>
 <body>
 <div class="m-4">
@@ -61,7 +61,7 @@
 	<div class="row row-cols-1 row-cols-md-<%=isAdmin? "4":"5"%> g-4">
 
 	<%
-		for(Product prod : prods.subList(startIndex, Math.min(endIndex, prods.size())))
+		for(Product prod : prods.subList(startIndex, endIndex))
 		{
 			request.setAttribute("prod", prod);
 			request.setAttribute("isAdmin", isAdmin);

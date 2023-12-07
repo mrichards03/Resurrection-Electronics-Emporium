@@ -9,7 +9,7 @@
 <html>
 <head>
 <%@ include file="header.jsp" %>
-<title>YOUR NAME Grocery Order Processing</title>
+<title>ReSurrected Electronics Emporium Order Processing</title>
 </head>
 <body>
 
