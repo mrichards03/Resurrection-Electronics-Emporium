@@ -76,7 +76,9 @@
 				<a class="page-link" href="listprod.jsp?page=<%=Math.max(currentPage - 1, 1)%>&productName=<%=name%>">Previous</a>
 			</li>
 			<%
-				for(int i = 1; i <= prods.size()/itemsPerPage; i++)
+				int totalPages = (int)Math.ceil((double)totalProducts / itemsPerPage);
+
+				for(int i = 1; i <= totalPages; i++)
 				{%>
 						<li class="page-item"><a class="page-link" href="listprod.jsp?page=<%=i%>&productName=<%=name%>"><%=i%></a></li>
 				<%}%>
