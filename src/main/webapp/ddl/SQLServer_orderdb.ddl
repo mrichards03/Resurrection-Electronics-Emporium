@@ -65,7 +65,7 @@ CREATE TABLE ordersummary (
     totalAmount         DECIMAL(10,2),
     shipToAddressId     INT,
     userId              INT,
-    paymentId     INT,
+    paymentId           INT,
     PRIMARY KEY (orderId),
     FOREIGN KEY (userId) REFERENCES users(userId),
     FOREIGN KEY (shipToAddressId) REFERENCES address(addressId),
@@ -177,7 +177,7 @@ CREATE TRIGGER updateInventory on product
 BEGIN
     INSERT INTO productinventory (productId, quantity, warehouseId) VALUES ((select productId from inserted), 1, 1)
 END
-Go
+
 INSERT INTO category (categoryName) VALUES (N'Screens');
 INSERT INTO category (categoryName) VALUES (N'Batteries');
 INSERT INTO category (categoryName) VALUES (N'Ports');

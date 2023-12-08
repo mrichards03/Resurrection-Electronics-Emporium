@@ -62,7 +62,7 @@
 
                 <!-- Image Upload -->
                 <!-- Current Image -->
-                <img onclick="triggerUpload(<%=prod.id%>)" id="currentImage<%=prod.id%>" src="displayImage.jsp?id=<%= prod.id %>" class="card-img-top" alt="Product Image" style="cursor:pointer;">
+                <img onclick="triggerUpload(<%=prod.id%>)" id="currentImage<%=prod.id%>" src="displayImage.jsp?id=<%= prod.id %>" class="card-img-top object-fit-contain" alt="Product Image" style="cursor:pointer; height:10rem;">
 
                 <!-- Hidden File Input -->
                 <input type="file" id="imageUpload<%=prod.id%>" name="image" style="display:none;" onchange="previewImage(<%=prod.id%>);">
@@ -121,7 +121,7 @@
     <%}else{%>
 <div class="col">
     <div class="card h-100">
-        <img src="displayImage.jsp?id=<%=prod.id%>" class="card-img-top" alt="">
+        <img src="displayImage.jsp?id=<%=prod.id%>" class="card-img-top object-fit-contain" alt="" style="height:10rem;">
         <div class="card-body d-flex flex-column justify-content-end">
             <div>
                 <span class="badge badge-primary"><%=prod.category.name%></span>
